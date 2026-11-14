@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { ig, igUserId } from '../../ig.js';
+import { ig, igUserId, PROFILE_FIELDS } from '../../ig.js';
 import { isCronAuthorized } from '../../auth.js';
 
 /** Protected (CRON_SECRET): account-level analytics.
@@ -18,7 +18,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const now = Math.floor(Date.now() / 1000), since = now - 29 * 86400;
 
   if (part === 'profile') {
-    const profile = await safe(() => ig('GET', 'me', { fields: 'user_id,username,name,followers_count,follows_count,media_count' }));
+    const profile = await safe(() => ig('GET', 'me', { fields: PROFILE_FIELDS() }));
     const totals: Record<string, any> = {};
     await Promise.all(ACC_TOTALS.map(async (m) => {
       totals[m] = await safe(async () => {

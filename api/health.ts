@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { db } from '../lib/db.js';
-import { ig, igUserId } from '../lib/ig.js';
+import { ig, igUserId, isUnified } from '../lib/ig.js';
 import { isCronAuthorized } from '../lib/auth.js';
 
 /** Protected health check: token valid? IG_USER_ID matches? Supabase reachable? Never returns secrets. */
@@ -17,12 +17,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     out.supabase = error ? { error: error.message || error.code || 'unknown', status, key_kind: keyKind } : `ok (${count} posts)`;
   } catch (e: any) { out.supabase = `error: ${e.message}`; }
   try {
-    const me = await ig<any>('GET', 'me', { fields: 'user_id,username,account_type' });
+    const me = await ig<any>('GET', 'me', { fields: isUnified() ? 'id,username' : 'user_id,username,account_type' });
     const configured = await igUserId();
     out.instagram = {
       token: 'ok',
+      setup: isUnified() ? 'unified-login (graph.facebook.com)' : 'instagram-login (graph.instagram.com)',
       username: me.username,
-      ig_user_id: me.user_id, // public account id, not a secret
+      ig_user_id: me.user_id ?? me.id, // public account id, not a secret
       account_type: me.account_type,
       ig_user_id_matches: configured === me.user_id || configured === me.id,
     };

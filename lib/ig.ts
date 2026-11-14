@@ -1,7 +1,17 @@
 import { env, GRAPH_VERSION } from './env.js';
 import { getSetting } from './db.js';
 
-const BASE = 'https://graph.instagram.com';
+/**
+ * IG_API_HOST selects the Meta setup:
+ *  - graph.instagram.com (default): "API setup with Instagram login" — 60-day Instagram User token, `me` = IG account.
+ *  - graph.facebook.com: "API setup with Unified login" (all new Meta apps since Oct 2026) — Business Integration
+ *    System User token that never expires; `me` is the system user, so every `me/...` path is sent to the IG user id.
+ */
+const HOST = (process.env.IG_API_HOST || 'graph.instagram.com').replace(/^https?:\/\//, '').replace(/\/$/, '');
+const BASE = `https://${HOST}`;
+export const isUnified = () => HOST === 'graph.facebook.com';
+/** Profile fields valid on both setups (user_id/account_type exist only on graph.instagram.com). */
+export const PROFILE_FIELDS = () => (isUnified() ? 'id,username,name,followers_count,follows_count,media_count' : 'user_id,username,name,followers_count,follows_count,media_count');
 
 export async function igToken(): Promise<string> {
   return (await getSetting('ig_access_token')) || env('IG_ACCESS_TOKEN');
@@ -20,7 +30,9 @@ export async function ig<T = any>(
   timeoutMs = 12000,
 ): Promise<T> {
   const token = await igToken();
-  const url = new URL(`${BASE}/${GRAPH_VERSION()}/${path.replace(/^\//, '')}`);
+  let p = path.replace(/^\//, '');
+  if (isUnified() && (p === 'me' || p.startsWith('me/'))) p = (await igUserId()) + p.slice(2);
+  const url = new URL(`${BASE}/${GRAPH_VERSION()}/${p}`);
   for (const [k, v] of Object.entries(params)) if (v !== undefined) url.searchParams.set(k, String(v));
   const init: RequestInit = { method, headers: { Authorization: `Bearer ${token}` } };
   if (body !== undefined) {

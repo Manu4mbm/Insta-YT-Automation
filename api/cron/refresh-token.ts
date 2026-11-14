@@ -1,10 +1,11 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { setSetting } from '../../lib/db.js';
-import { igToken } from '../../lib/ig.js';
+import { igToken, isUnified } from '../../lib/ig.js';
 import { isCronAuthorized } from '../../lib/auth.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!isCronAuthorized(req)) return res.status(401).json({ error: 'unauthorized' });
+  if (isUnified()) return res.status(200).json({ ok: true, skipped: 'unified-login system-user token does not expire' });
   const url = new URL('https://graph.instagram.com/refresh_access_token');
   url.searchParams.set('grant_type', 'ig_refresh_token');
   url.searchParams.set('access_token', await igToken());
