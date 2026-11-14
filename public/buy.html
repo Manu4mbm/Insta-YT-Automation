@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Checkout · Build with {{OWNER_NAME}}</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0B1A3C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<style>
+:root{--navy:#0B1A3C;--navy2:#13285A;--blue:#2563EB;--blue2:#1D4ED8;--ink:#0F172A;--mut:#64748B;--line:#E5E9F2;--bg:#EEF2F8;--ok:#16A34A;--warn:#EA580C;--err:#DC2626;--r:14px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}body{background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,-apple-system,sans-serif;min-height:100vh}
+.band{position:fixed;inset:0 0 auto 0;height:260px;background:var(--navy);z-index:0}
+.band:after{content:'';position:absolute;inset:0;background:radial-gradient(600px 200px at 80% 0,rgba(37,99,235,.35),transparent 70%)}
+.page{position:relative;z-index:1;max-width:880px;margin:0 auto;padding:40px 16px 40px}
+.modal{display:grid;grid-template-columns:320px 1fr;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 30px 80px rgba(11,26,60,.28),0 4px 14px rgba(11,26,60,.08);animation:rise .55s cubic-bezier(.16,1,.3,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(28px) scale(.98)}to{opacity:1;transform:none}}
+
+/* summary side */
+.side{background:linear-gradient(180deg,var(--navy2),var(--navy));color:#fff;padding:28px 26px;display:flex;flex-direction:column;min-height:540px}
+.merchant{display:flex;align-items:center;gap:12px}
+.logo{width:44px;height:44px;border-radius:12px;background:#fff;color:var(--navy);display:grid;place-items:center;font-weight:800;font-size:16px;letter-spacing:-.5px;box-shadow:0 0 0 3px rgba(255,255,255,.12)}
+.merchant b{display:block;font-size:16px}.merchant span{font-size:12px;opacity:.65}
+.verified{display:inline-flex;align-items:center;gap:4px;font-size:11px;background:rgba(22,163,74,.18);color:#86EFAC;padding:2px 8px;border-radius:99px;margin-top:3px}
+.prod{margin-top:28px}.prod .k{font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.55}
+.prod h2{font-size:19px;line-height:1.3;margin:6px 0 4px}.prod p{font-size:13px;opacity:.7;margin:0}
+.sum{margin-top:22px;border-top:1px dashed rgba(255,255,255,.18);padding-top:16px;font-size:13px}
+.sum .r{display:flex;justify-content:space-between;padding:4px 0;opacity:.8}
+.sum .r.adj{color:#86EFAC;opacity:1}
+.sum .tot{display:flex;justify-content:space-between;align-items:baseline;margin-top:10px;padding-top:12px;border-top:1px solid rgba(255,255,255,.14)}
+.sum .tot>span{opacity:.7}.sum .tot b{font-size:30px;font-weight:800;letter-spacing:-.5px;transition:all .3s}
+.side .foot{margin-top:auto;padding-top:24px;font-size:12px;color:rgba(255,255,255,.72);display:flex;flex-direction:column;gap:8px}
+.side .foot div{display:flex;gap:8px;align-items:center}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}.chips i{font-style:normal;width:34px;height:26px;border-radius:7px;display:grid;place-items:center}.chips i svg{width:22px;height:22px}.chips img{width:28px;height:28px;border-radius:7px;background:#fff;object-fit:cover}.chips i.any{width:auto;padding:0 9px;font-size:11px;font-weight:600;background:rgba(255,255,255,.1)}
+
+/* main side */
+.main{padding:26px 28px 24px;display:flex;flex-direction:column;min-width:0}
+.steps{display:flex;align-items:center;gap:0;margin-bottom:22px}
+.st{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--mut);white-space:nowrap}
+.st .n{width:24px;height:24px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:11px;transition:all .35s;background:#fff}
+.st.on{color:var(--ink)}.st.on .n{border-color:var(--blue);color:var(--blue);box-shadow:0 0 0 4px rgba(37,99,235,.12)}
+.st.done .n{background:var(--ok);border-color:var(--ok);color:#fff}.st.done .n:after{content:'✓'}.st.done .n b{display:none}
+.bar{flex:1;height:2px;background:var(--line);margin:0 10px;position:relative;overflow:hidden;border-radius:2px}
+.bar:after{content:'';position:absolute;inset:0;background:var(--ok);transform:scaleX(0);transform-origin:left;transition:transform .5s}
+.bar.fill:after{transform:scaleX(1)}
+
+.view{display:none}.view.in{display:block;animation:vin .45s cubic-bezier(.16,1,.3,1) both}
+@keyframes vin{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+h1{font-size:21px;margin:0 0 4px;letter-spacing:-.3px}.sub{color:var(--mut);margin:0 0 18px;font-size:14px}
+
+.field{position:relative;margin-bottom:14px}
+.field input{width:100%;height:54px;padding:20px 14px 6px;border:1.5px solid var(--line);border-radius:12px;font:500 15px Inter,sans-serif;color:var(--ink);background:#fff;transition:border-color .2s,box-shadow .2s}
+.field label{position:absolute;left:14px;top:17px;color:var(--mut);font-size:15px;pointer-events:none;transition:all .18s}
+.field input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 4px rgba(37,99,235,.12)}
+.field input:focus+label,.field input:not(:placeholder-shown)+label{top:7px;font-size:11px;font-weight:600;color:var(--blue)}
+.field.ph input{padding-left:58px}.field.ph label{left:58px}
+.field .cc{position:absolute;left:1.5px;top:1.5px;bottom:1.5px;width:48px;display:grid;place-items:center;border-right:1.5px solid var(--line);font-weight:600;font-size:14px;color:var(--mut);border-radius:11px 0 0 11px;background:#F8FAFC}
+.field.bad input{border-color:var(--err);animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.agree{display:flex;gap:10px;align-items:flex-start;font-size:12.5px;color:var(--mut);margin:6px 0 4px}
+.agree input{width:17px;height:17px;margin:1px 0 0;accent-color:var(--blue);flex:none}.agree a{color:var(--blue)}
+.err{color:var(--err);font-size:13px;min-height:18px;margin-top:8px}
+
+.btn{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:52px;border:0;border-radius:12px;background:var(--blue);color:#fff;font:700 16px Inter,sans-serif;cursor:pointer;text-decoration:none;margin-top:14px;transition:background .2s,transform .12s,box-shadow .2s;box-shadow:0 6px 18px rgba(37,99,235,.28)}
+.btn:hover{background:var(--blue2)}.btn:active{transform:scale(.985)}
+.btn.ghost{background:#fff;color:var(--blue);border:1.5px solid var(--blue);box-shadow:none}
+.btn.load{pointer-events:none}.btn.load span{opacity:0}.btn.load:after{content:'';position:absolute;width:22px;height:22px;border:3px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* pay view */
+.payhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+.ring{position:relative;width:58px;height:58px;flex:none}.ring svg{transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:4}.ring .bg{stroke:var(--line)}.ring .fg{stroke:var(--blue);stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .3s}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+.exact{display:flex;gap:10px;align-items:center;background:#FFF7ED;border:1px solid #FED7AA;border-radius:12px;padding:10px 12px;font-size:13px;color:#9A3412;margin-bottom:16px}
+.exact b{color:var(--ink);font-size:15px}
+.tabs{display:flex;background:#F1F5F9;border-radius:12px;padding:4px;margin-bottom:16px;position:relative}
+.tabs button{flex:1;position:relative;z-index:1;border:0;background:none;height:38px;border-radius:9px;font:600 14px Inter,sans-serif;color:var(--mut);cursor:pointer;transition:color .2s}
+.tabs button.on{color:var(--ink)}
+.tabs .pill{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);background:#fff;border-radius:9px;box-shadow:0 1px 4px rgba(15,23,42,.12);transition:transform .35s cubic-bezier(.16,1,.3,1)}
+.tabs.r .pill{transform:translateX(100%)}
+.apps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.app{display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px 4px 10px;border:1.5px solid var(--line);border-radius:12px;text-decoration:none;color:var(--ink);font-size:12px;font-weight:600;transition:all .2s}
+.app:hover{border-color:var(--blue);transform:translateY(-2px);box-shadow:0 6px 16px rgba(15,23,42,.08)}
+.app .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:#fff;border:1px solid var(--line);box-shadow:0 1px 3px rgba(15,23,42,.06)}.app img.ic{object-fit:cover;padding:0;overflow:hidden}.app .ic svg{width:30px;height:30px}.app .ic.pe{background:#5F259F;border-color:#5F259F}.app .ic.pe svg{width:26px;height:26px}
+.qrbox{display:flex;flex-direction:column;align-items:center}
+.qrwrap{position:relative;padding:12px;border-radius:16px;background:#fff;border:1.5px solid var(--line);overflow:hidden}
+.qrwrap svg{display:block;width:210px;height:210px}
+.qrwrap:before,.qrwrap:after{content:'';position:absolute;width:22px;height:22px;border:3px solid var(--blue)}
+.qrwrap:before{top:6px;left:6px;border-right:0;border-bottom:0;border-radius:6px 0 0 0}
+.qrwrap:after{bottom:6px;right:6px;border-left:0;border-top:0;border-radius:0 0 6px 0}
+.scan{position:absolute;left:12px;right:12px;height:2px;background:linear-gradient(90deg,transparent,var(--blue),transparent);top:12px;animation:scan 2.4s ease-in-out infinite;box-shadow:0 0 12px var(--blue)}
+@keyframes scan{50%{top:calc(100% - 14px)}}
+.qrbox p{font-size:13px;color:var(--mut);text-align:center;margin:10px 0 0}
+.vpa{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:16px;font-size:13px}
+.vpa span{color:var(--mut)}.vpa code{flex:1;font:600 13px ui-monospace,SFMono-Regular,monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vpa button{border:0;background:#EFF6FF;color:var(--blue);font:700 12px Inter,sans-serif;border-radius:8px;padding:7px 11px;cursor:pointer}
+.wait{margin-top:16px;border-radius:12px;background:#F8FAFC;border:1px solid var(--line);padding:12px 14px;font-size:13px}
+.wait .t{display:flex;align-items:center;gap:10px;font-weight:600;font-size:14px}
+.pulse{width:10px;height:10px;border-radius:50%;background:var(--warn);position:relative;flex:none}
+.pulse:after{content:'';position:absolute;inset:-5px;border-radius:50%;border:2px solid var(--warn);animation:ping 1.4s ease-out infinite}
+@keyframes ping{from{transform:scale(.4);opacity:1}to{transform:scale(1.4);opacity:0}}
+.wait.verify .pulse{background:var(--blue)}.wait.verify .pulse:after{border-color:var(--blue)}
+.prog{height:4px;border-radius:4px;background:var(--line);overflow:hidden;margin-top:10px}
+.prog i{display:block;height:100%;width:40%;background:var(--blue);border-radius:4px;animation:load 1.3s ease-in-out infinite}
+@keyframes load{from{transform:translateX(-100%)}to{transform:translateX(260%)}}
+.wait p{margin:8px 0 0;color:var(--mut)}
+details{margin-top:14px;border-top:1px solid var(--line);padding-top:12px;font-size:13px}
+summary{cursor:pointer;font-weight:600;color:var(--blue);list-style:none}summary::-webkit-details-marker{display:none}
+details .field{margin-top:10px}
+
+/* done */
+.done{text-align:center}
+.tick{width:92px;height:92px;margin:6px auto 10px}
+.tick circle{fill:none;stroke:var(--ok);stroke-width:4;stroke-dasharray:283;stroke-dashoffset:283;animation:draw .7s ease-out forwards}
+.tick path{fill:none;stroke:var(--ok);stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:60;stroke-dashoffset:60;animation:draw .4s .6s ease-out forwards}
+.tick .fill{fill:rgba(22,163,74,.1);stroke:none;transform-origin:center;transform:scale(0);animation:pop .5s .55s cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}@keyframes pop{to{transform:scale(1)}}
+.receipt{display:inline-flex;gap:14px;font-size:13px;color:var(--mut);background:#F8FAFC;border:1px solid var(--line);border-radius:99px;padding:6px 14px;margin:4px 0 18px}
+.receipt b{color:var(--ink)}
+.mailcard{display:flex;gap:14px;text-align:left;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:14px;padding:16px}
+.env{width:46px;height:46px;border-radius:12px;background:#fff;display:grid;place-items:center;font-size:24px;flex:none;box-shadow:0 2px 8px rgba(37,99,235,.15);animation:fly 2s ease-in-out infinite}
+@keyframes fly{50%{transform:translateY(-4px) rotate(-4deg)}}
+.mailcard>div>b{display:block;font-size:15px}.mailcard p{margin:3px 0 0;font-size:13px;color:#334155}
+.track{list-style:none;padding:0;margin:16px 0 0;text-align:left}
+.track li{display:flex;gap:12px;align-items:center;padding:7px 0;font-size:14px;font-weight:600}
+.track .d{width:22px;height:22px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:12px;color:#fff;background:var(--ok)}
+.track li.p .d{background:#fff;border:2px solid var(--blue);position:relative}
+.track li.p .d:after{content:'';position:absolute;inset:3px;border-radius:50%;border:2px solid transparent;border-top-color:var(--blue);animation:spin .9s linear infinite}
+.track small{font-weight:400;color:var(--mut)}
+.hint{font-size:13px;color:var(--mut);margin-top:10px;text-align:left}
+.dlbox{margin-top:18px;padding-top:16px;border-top:1px solid var(--line);text-align:left}
+.dlbox b{font-size:14px}
+.help{font-size:12.5px;color:var(--mut);margin-top:14px}.help a{color:var(--blue)}
+.secure{display:flex;justify-content:center;gap:6px;align-items:center;font-size:12px;color:var(--mut);margin-top:auto;padding-top:20px}
+.below{text-align:center;font-size:12px;color:var(--mut);margin-top:16px}.below a{color:var(--mut)}
+.hide{display:none!important}
+.rpline{text-align:center;font-size:12.5px;color:var(--mut);margin-top:10px}
+.howto{list-style:none;padding:0;margin:0 0 14px;display:flex;flex-direction:column;gap:10px}.howto li{display:flex;gap:12px;align-items:flex-start;font-size:14px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px}.howto .n{width:24px;height:24px;border-radius:7px;background:var(--blue);color:#fff;font-weight:800;font-size:13px;display:grid;place-items:center;flex:none;margin-top:1px}.copyrow{display:flex;align-items:center;gap:8px;margin-top:6px}.copyrow code{flex:1;font:700 14px ui-monospace,SFMono-Regular,monospace;background:#F1F5F9;border-radius:8px;padding:7px 10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.copyrow button{border:0;background:#EFF6FF;color:var(--blue);font:700 12px Inter,sans-serif;border-radius:8px;padding:8px 12px;cursor:pointer}
+.who{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;color:var(--mut);background:#F8FAFC;border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:-4px 0 12px;flex-wrap:wrap}.who b{color:var(--ink);font-weight:600}.who button{border:0;background:#EFF6FF;color:var(--blue);font:700 12.5px Inter,sans-serif;border-radius:8px;padding:6px 10px;cursor:pointer;white-space:nowrap}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,40px);opacity:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:600;transition:all .3s;z-index:9}
+.toast.on{transform:translate(-50%,0);opacity:1}
+
+/* processing overlay */
+.proc{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:16px;background:rgba(11,26,60,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .35s}
+.proc.on{opacity:1;pointer-events:auto}
+.pcard{width:100%;max-width:400px;background:#fff;border-radius:22px;padding:30px 24px 22px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.35);transform:translateY(20px) scale(.96);transition:transform .45s cubic-bezier(.16,1,.3,1)}
+.proc.on .pcard{transform:none}
+.pcard h2{font-size:20px;margin:18px 0 4px;letter-spacing:-.3px}.pcard p{margin:0;color:var(--mut);font-size:14px;min-height:21px;transition:opacity .3s}
+.scene{position:relative;height:110px;display:flex;align-items:center;justify-content:space-between;padding:0 6px}
+.node{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--mut);transition:opacity .4s,transform .4s}
+.node svg{width:46px;height:56px}.bank svg{width:56px}
+.ptrack{position:absolute;left:66px;right:72px;top:38px;display:flex;justify-content:space-between}
+.ptrack i{width:6px;height:6px;border-radius:50%;background:#CBD5E1;animation:dot 1.1s infinite}
+.ptrack i:nth-child(2){animation-delay:.1s}.ptrack i:nth-child(3){animation-delay:.2s}.ptrack i:nth-child(4){animation-delay:.3s}.ptrack i:nth-child(5){animation-delay:.4s}.ptrack i:nth-child(6){animation-delay:.5s}.ptrack i:nth-child(7){animation-delay:.6s}
+@keyframes dot{0%,100%{background:#CBD5E1;transform:scale(1)}30%{background:var(--blue);transform:scale(1.5)}}
+.coin{position:absolute;z-index:3;top:20px;left:52px;width:40px;height:40px;perspective:300px;animation:fly1 1.1s cubic-bezier(.65,0,.35,1) infinite}
+.coin .face{width:100%;height:100%;border-radius:50%;display:grid;place-items:center;font:800 19px Inter,sans-serif;color:#7C4A03;background:radial-gradient(circle at 35% 30%,#FFF3B0,#FACC15 45%,#D99A06);box-shadow:inset 0 -3px 0 rgba(0,0,0,.15),0 0 0 3px #F5B800,0 6px 14px rgba(217,154,6,.45);animation:wob 1.1s linear infinite}
+.coin:before,.coin:after{content:'';position:absolute;top:16px;right:100%;height:3px;border-radius:3px;background:linear-gradient(90deg,transparent,rgba(250,204,21,.8));animation:trail 1.1s infinite}
+.coin:before{width:34px}.coin:after{width:22px;top:24px;animation-delay:.05s}
+@keyframes fly1{0%{transform:translate(0,0) scale(.7);opacity:0}12%{opacity:1;transform:translate(10px,-14px) scale(1)}50%{transform:translate(calc(var(--d,246px) * .5),-30px) scale(1.08)}88%{opacity:1;transform:translate(calc(var(--d,246px) * .94),-6px) scale(.95)}100%{transform:translate(var(--d,246px),6px) scale(.6);opacity:0}}
+@keyframes wob{to{transform:rotateY(360deg)}}
+@keyframes trail{0%,10%,90%,100%{opacity:0}30%,70%{opacity:1}}
+.pbar{height:5px;border-radius:5px;background:#E2E8F0;overflow:hidden;margin:18px 0 10px}
+.pbar i{display:block;height:100%;width:35%;border-radius:5px;background:linear-gradient(90deg,var(--blue),#60A5FA);animation:load 1.2s ease-in-out infinite}
+.pnote{font-size:12px!important}
+.plink{margin-top:14px;border:0;background:none;color:var(--mut);font:500 12.5px Inter,sans-serif;text-decoration:underline;cursor:pointer}
+.okc{position:absolute;left:50%;top:50%;width:84px;height:84px;margin:-42px 0 0 -42px;opacity:0;z-index:4}
+.okc circle{fill:#F0FDF4;stroke:var(--ok);stroke-width:5;stroke-dasharray:277;stroke-dashoffset:277}
+.okc path{fill:none;stroke:var(--ok);stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:60;stroke-dashoffset:60}
+/* success sequence */
+.scene.win .ptrack,.scene.win .node{opacity:0;transform:scale(.8)}
+.scene.win .coin{animation:land .9s cubic-bezier(.16,1,.3,1) forwards}
+.scene.win .coin .face{animation:spinfast 1s cubic-bezier(.2,.8,.2,1) forwards}
+.scene.win .coin:before,.scene.win .coin:after{display:none}
+@keyframes land{from{transform:translate(calc(var(--d,246px) * .5),-10px) scale(1)}to{left:50%;margin-left:-20px;transform:translate(0,0) scale(1.9)}}
+@keyframes spinfast{to{transform:rotateY(1800deg)}}
+.proc .pbar{transition:opacity .3s}.proc.won .pbar{opacity:0}
+.scene.win2 .coin{transition:opacity .25s,transform .25s;opacity:0!important;transform:scale(.3)!important}
+.scene.win2 .okc{opacity:1;animation:pop2 .45s cubic-bezier(.34,1.56,.64,1) both}
+.scene.win2 .okc circle{animation:draw .5s ease-out forwards}.scene.win2 .okc path{animation:draw .35s .3s ease-out forwards}
+@keyframes pop2{from{transform:scale(.4)}to{transform:scale(1)}}
+.burst{position:absolute;left:50%;top:50%;width:8px;height:8px;border-radius:2px;z-index:3;animation:burst .8s ease-out forwards}
+@keyframes burst{from{transform:translate(-50%,-50%) rotate(0);opacity:1}to{transform:translate(var(--x),var(--y)) rotate(260deg);opacity:0}}
+
+@media (max-width:760px){
+  .band{height:210px}.page{padding:16px 12px 28px}
+  .modal{grid-template-columns:1fr;border-radius:16px}
+  .side{min-height:0;padding:18px 18px 16px}
+  .prod{margin-top:14px}.prod h2{font-size:16px}.prod p{display:none}
+  .sum{margin-top:12px;padding-top:0;border-top:0}.sum .r{display:none}.sum .r.adj{display:flex}.sum .tot{margin-top:4px;padding-top:8px}
+  .side .foot{display:none}
+  .main{padding:20px 18px 18px}
+  .steps .st span{display:none}
+  .apps{grid-template-columns:repeat(4,1fr);gap:8px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="band"></div>
+<div class="page">
+  <div class="modal">
+    <aside class="side">
+      <div class="merchant">
+        <div class="logo">BV</div>
+        <div><b>Build with {{OWNER_NAME}}</b><span>@{{IG_HANDLE}}</span><br><span class="verified">● Secure payment</span></div>
+      </div>
+      <div class="prod">
+        <div class="k">You're buying</div>
+        <h2 id="p-title">Loading…</h2>
+        <p id="p-desc"></p>
+      </div>
+      <div class="sum">
+        <div class="r"><span>Item price</span><span>₹<span id="s-price">—</span></span></div>
+        <div class="r adj hide" id="s-adj-row"><span>UPI match discount</span><span>−₹<span id="s-adj"></span></span></div>
+        <div class="tot"><span>Total</span><b>₹<span id="s-total">—</span></b></div>
+      </div>
+      <div class="foot">
+        <div>🔒 Paid directly to bank via UPI</div>
+        <div>⚡ Instant digital delivery on email</div>
+        <div class="chips"><img src="/pay-logos/gpay.png" alt="Google Pay"><img src="/pay-logos/phonepe.png" alt="PhonePe"><img src="/pay-logos/paytm.png" alt="Paytm"><i class="any">+ any UPI app</i></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="steps">
+        <div class="st on" id="st1"><div class="n"><b>1</b></div><span>Details</span></div><div class="bar" id="b1"></div>
+        <div class="st" id="st2"><div class="n"><b>2</b></div><span>Payment</span></div><div class="bar" id="b2"></div>
+        <div class="st" id="st3"><div class="n"><b>3</b></div><span>Kit delivered</span></div>
+      </div>
+
+      <section class="view in" id="v-load"><p class="sub">Loading checkout…</p></section>
+
+      <section class="view" id="v-form">
+        <h1 id="f-h">Contact details</h1>
+        <p class="sub" id="f-sub">Kit ka download link isi email pe aayega.</p>
+        <div class="field" id="f-email"><input id="email" type="email" autocomplete="email" placeholder=" "><label for="email">Email address</label></div>
+        <div class="field ph hide" id="f-phone"><span class="cc">+91</span><input id="phone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="14" placeholder=" "><label for="phone">Mobile number</label></div>
+        <label class="agree"><input id="agree" type="checkbox"><span>I agree to the <a href="/terms" target="_blank">Terms &amp; Refund policy</a> and <a href="/privacy" target="_blank">Privacy policy</a>.</span></label>
+        <button id="go" class="btn"><span>Proceed to pay ₹<span id="go-amt"></span></span></button>
+        <div id="f-err" class="err"></div>
+        <button id="f-back" class="plink hide" style="display:block;margin:10px auto 0">← Bina badle wapas jao</button>
+      </section>
+
+      <section class="view" id="v-pay">
+        <div class="payhead">
+          <div><h1>Pay ₹<span id="o-amt"></span></h1><p class="sub" style="margin:0" id="pay-sub">Pay using any UPI app</p></div>
+          <div class="ring" title="Time left"><svg width="58" height="58"><circle class="bg" cx="29" cy="29" r="25"/><circle class="fg" id="ring" cx="29" cy="29" r="25" stroke-dasharray="157" stroke-dashoffset="0"/></svg><b id="o-left">20:00</b></div>
+        </div>
+        <div class="who"><span>📧 <b id="c-email"></b><b id="c-phone" class="hide"></b></span><button id="edit-btn">✏️ Details badlo</button></div>
+        <div id="rpbox" class="hide">
+          <button class="btn" id="rp-pay"><span>🔒 Pay ₹<span id="rp-amt"></span> securely</span></button>
+          <div class="rpline">UPI · Cards · Netbanking · Wallets &nbsp;·&nbsp; Secured by Razorpay</div>
+          <div class="apps" style="margin-top:12px;pointer-events:none;opacity:.9"><a class="app"><img class="ic" src="/pay-logos/gpay.png" alt="">Google Pay</a><a class="app"><img class="ic" src="/pay-logos/phonepe.png" alt="">PhonePe</a><a class="app"><img class="ic" src="/pay-logos/paytm.png" alt="">Paytm</a><a class="app"><div class="ic" style="font-weight:800;font-size:12px">CARD</div>Cards</a></div>
+        </div>
+        <div id="upibox" class="hide">
+        <div class="exact">⚠️<div>Exactly <b>₹<span id="o-amt2"></span></b> pay karo, paise bhi same. Isi se aapka payment automatically verify hota hai.</div></div>
+        <div class="tabs" id="tabs"><div class="pill"></div><button data-tab="apps">UPI ID se pay</button><button data-tab="qr">Scan QR</button></div>
+        <div id="t-apps">
+          <p class="hint hide" id="tap" style="margin:0 0 10px">App chuno — amount pehle se bhara hoga, bas UPI PIN daalo ✓</p>
+          <ol class="howto" id="howto">
+            <li><span class="n">1</span><div><b>UPI ID copy karo</b><div class="copyrow"><code id="o-vpa2"></code><button data-copy="o-vpa2">Copy</button></div></div></li>
+            <li><span class="n">2</span><div><b>Koi bhi UPI app kholo</b> → <b>"Pay UPI ID"</b> / "Pay anyone" → UPI ID paste karo</div></li>
+            <li><span class="n">3</span><div><b>Exactly ₹<span id="o-amt3"></span> daalo</b> aur pay karo<div class="copyrow"><code>₹<span id="o-amt4"></span></code><button data-copyamt="1">Copy</button></div></div></li>
+          </ol>
+          <div class="apps">
+            <a class="app" data-open="gpay"><img class="ic" src="/pay-logos/gpay.png" alt="">Google Pay</a>
+            <a class="app" data-open="phonepe"><img class="ic" src="/pay-logos/phonepe.png" alt="">PhonePe</a>
+            <a class="app" data-open="paytm"><img class="ic" src="/pay-logos/paytm.png" alt="">Paytm</a>
+            <a class="app" data-open="any"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7.5" height="7.5" rx="2" fill="#2563EB"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2" fill="#16A34A"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2" fill="#F97316"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2" fill="#0F172A"/></svg></div>Other app</a>
+          </div>
+          <p class="hint">Tile dabate hi UPI ID copy ho jayega aur app khul jayega. Laptop pe ho? <a href="#" data-goto="qr">QR</a> phone se scan karo.</p>
+        </div>
+        <div id="t-qr" class="qrbox hide">
+          <div class="qrwrap"><div id="qr"></div><div class="scan"></div></div>
+          <p>Phone ke kisi bhi UPI app se scan karo</p>
+        </div>
+        <div class="vpa"><span>UPI ID</span><code id="o-vpa"></code><button data-copy="o-vpa">Copy</button></div>
+        <div class="wait" id="wait">
+          <div class="t"><span class="pulse"></span><span id="w-t">Waiting for your payment…</span></div>
+          <div class="prog hide" id="w-prog"><i></i></div>
+          <p id="w-p">Pay karke isi page pe wapas aao. Payment ~1 minute mein khud confirm hoga, aur kit <b>1–2 minute</b> mein aapke email pe aa jayega.</p>
+        </div>
+        </div>
+        <button class="btn" id="paid-btn" style="margin-top:12px"><span>Maine payment kar diya ✓</span></button>
+        <details id="claim">
+          <summary>Pay kar diya par confirm nahi hua?</summary>
+          <p class="hint" style="margin-top:6px">UPI app mein payment details kholo aur 12-digit <b>UPI Ref / UTR</b> number daalo.</p>
+          <div class="field"><input id="utr" inputmode="numeric" maxlength="14" placeholder=" "><label for="utr">UPI Ref / UTR number</label></div>
+          <button id="claim-go" class="btn ghost" style="margin-top:0"><span>Verify my payment</span></button>
+          <div id="c-msg" class="err"></div>
+        </details>
+      </section>
+
+      <section class="view done" id="v-done">
+        <svg class="tick" viewBox="0 0 100 100"><circle class="fill" cx="50" cy="50" r="45"/><circle cx="50" cy="50" r="45"/><path d="M30 52 L45 66 L71 38"/></svg>
+        <h1>Payment successful</h1>
+        <div class="receipt"><span>Paid <b>₹<span id="d-amt"></span></b></span><span id="d-ref"></span></div>
+        <div class="dlbox" style="margin-top:14px">
+          <a id="dl" class="btn" href="#"><span>⬇ Download kit</span></a>
+          <p id="d-wait" class="hint hide">Kit upload ho raha hai. Ready hote hi email pe link aa jayega.</p>
+          <p class="hint" style="margin:6px 0 0">Copy aapke email pe bhi aa rahi hai 👇</p>
+        </div>
+        <div class="mailcard">
+          <div class="env">📩</div>
+          <div><b id="d-mail-h">Your kit is on its way to your email</b>
+          <p id="d-mail-p">Download link <b id="d-email"></b> pe bheja ja raha hai. <b>1–2 minute</b> mein inbox mein aa jayega.</p></div>
+        </div>
+        <p class="hint" style="margin:10px 0 0">Email galat daal di? <a href="#" id="edit-done">Email badlo</a> — kit naye email pe dobara bhej denge.</p>
+        <ul class="track">
+          <li><span class="d">✓</span>Payment received</li>
+          <li class="p" id="tr-mail"><span class="d"></span><span id="tr-mail-t">Sending kit to your email… <small>(1–2 min)</small></span></li>
+        </ul>
+        <p class="hint">Email nahi dikha? <b>Spam</b> / <b>Promotions</b> folder check karo (sender: {{OWNER_NAME}}). Wahan mile to <b>"Not spam"</b> daba dena.</p>
+        <p class="help">Koi problem? Delivery email pe reply karo ya <a href="https://instagram.com/{{IG_HANDLE}}">@{{IG_HANDLE}}</a> ko DM karo.</p>
+      </section>
+
+      <div class="secure">🔒 Secure checkout · Card / bank details hum store nahi karte</div>
+    </main>
+  </div>
+  <div class="below"><a href="/terms">Terms</a> · <a href="/refund">Refunds</a> · <a href="/delivery">Delivery</a> · <a href="/privacy">Privacy</a> · <a href="/contact">Contact</a></div>
+</div>
+<div class="proc" id="proc" aria-live="polite">
+  <div class="pcard">
+    <div class="scene" id="scene">
+      <div class="node phone"><svg viewBox="0 0 40 56"><rect x="3" y="2" width="34" height="52" rx="7" fill="#fff" stroke="#0B1A3C" stroke-width="3"/><rect x="9" y="9" width="22" height="32" rx="2" fill="#DBEAFE"/><path d="M14 25l4 4 8-8" stroke="#2563EB" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20" cy="47" r="2.5" fill="#0B1A3C"/></svg><span>You</span></div>
+      <div class="ptrack"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="coin" id="coin"><div class="face">₹</div></div>
+      <div class="node bank"><svg viewBox="0 0 56 56"><path d="M28 5L5 17v5h46v-5z" fill="#0B1A3C"/><rect x="10" y="24" width="6" height="18" fill="#0B1A3C"/><rect x="25" y="24" width="6" height="18" fill="#0B1A3C"/><rect x="40" y="24" width="6" height="18" fill="#0B1A3C"/><rect x="5" y="44" width="46" height="7" rx="2" fill="#0B1A3C"/></svg><span>Bank</span></div>
+      <svg class="okc" id="okc" viewBox="0 0 100 100"><circle cx="50" cy="50" r="44"/><path d="M30 52 L45 66 L71 38"/></svg>
+    </div>
+    <h2 id="p-h">Processing your payment</h2>
+    <p id="p-s">Bank se confirmation le rahe hain…</p>
+    <div class="pbar"><i></i></div>
+    <p class="pnote" id="p-n">Is page ko band mat karo · usually ~1 minute</p>
+    <button class="plink" id="p-x">Abhi pay nahi kiya? Wapas jao</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const slug = location.pathname.split('/').filter(Boolean).pop();
+const qs = new URLSearchParams(location.search);
+const KEY = 'order:' + slug;
+const mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+const store = { get(){ try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch { return null; } }, set(v){ try { localStorage.setItem(KEY, JSON.stringify(v)); } catch {} } };
+let cur = null, timer = null, tick = null, price = null, drawnQR = '', lastView = '';
+
+function toast(t){ const el=$('toast'); el.textContent=t; el.classList.add('on'); clearTimeout(toast.h); toast.h=setTimeout(()=>el.classList.remove('on'),1800); }
+function view(id){
+  if (lastView === id) return; lastView = id;
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('in', v.id === id));
+  const step = { 'v-form':1, 'v-pay':2, 'v-done':3 }[id] || 1;
+  [1,2,3].forEach(i => { $('st'+i).className = 'st' + (i < step || (i===3 && step===3) ? ' done' : i === step ? ' on' : ''); });
+  $('b1').classList.toggle('fill', step > 1); $('b2').classList.toggle('fill', step > 2);
+}
+function tab(t){ $('tabs').classList.toggle('r', t==='qr'); document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on', b.dataset.tab===t)); $('t-apps').classList.toggle('hide', t!=='apps'); $('t-qr').classList.toggle('hide', t!=='qr'); document.querySelector('.vpa').classList.toggle('hide', t!=='qr'); }
+async function api(op, opts = {}) {
+  const r = await fetch('/api/pay/' + op + (opts.q ? '?' + new URLSearchParams(opts.q) : ''), opts.body ? { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(opts.body) } : {});
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error || 'Kuch gadbad hui, dobara try karo');
+  return j;
+}
+function summary(amount){
+  $('s-total').textContent = amount;
+  const adj = (parseFloat(price) - parseFloat(amount)).toFixed(2);
+  $('s-adj-row').classList.toggle('hide', !(adj > 0)); $('s-adj').textContent = adj;
+}
+function countdown(exp){
+  clearInterval(tick);
+  const total = 20 * 60e3;
+  const f = () => {
+    const left = Math.max(0, new Date(exp) - Date.now());
+    const m = Math.floor(left/60000), s = Math.floor(left%60000/1000);
+    $('o-left').textContent = left ? `${m}:${String(s).padStart(2,'0')}` : '0:00';
+    $('ring').style.strokeDashoffset = 157 * (1 - left / total);
+    $('ring').style.stroke = left < 180e3 ? 'var(--warn)' : 'var(--blue)';
+    if (!left) { $('claim').open = true; clearInterval(tick); }
+  };
+  f(); tick = setInterval(f, 1000);
+}
+
+let editing = false, contact = null, rpOrder = null;
+function loadRp() { return window.Razorpay ? Promise.resolve() : new Promise((ok, no) => { const sc = document.createElement('script'); sc.src = 'https://checkout.razorpay.com/v1/checkout.js'; sc.onload = ok; sc.onerror = no; document.head.appendChild(sc); }); }
+async function openRp() {
+  if (!rpOrder || !cur) return;
+  if (rpOrder.url) { location.href = rpOrder.url; return; }
+  try { await loadRp(); } catch { toast('Payment window load nahi hua, dobara try karo'); return; }
+  const r = new window.Razorpay({ key: rpOrder.key, order_id: rpOrder.order_id, amount: rpOrder.amount, currency: 'INR', name: rpOrder.name, description: rpOrder.description,
+    prefill: { email: rpOrder.email, contact: rpOrder.contact }, theme: { color: '#2563EB' },
+    handler: async (resp) => { procDismissedAt = 0; showProcForce(); try { await api('rp-verify', { body: { id: cur.id, t: cur.t, ...resp } }); } catch (e) {} poll(); },
+    modal: { ondismiss: () => { toast('Payment pura nahi hua — "Pay" dabake dobara try karo'); poll(); } } });
+  r.on && r.on('payment.failed', () => toast('Payment fail hua — dobara try karo'));
+  r.open();
+}
+function render(o) {
+  if (editing) return;
+  if (o.contact) contact = o.contact;
+  summary(o.amount);
+  if (o.paid) {
+    if (lastView === 'v-pay' && !played) { clearInterval(tick); celebrate(() => render(o)); return; }
+    view('v-done'); clearInterval(tick);
+    $('d-amt').textContent = o.amount; $('d-email').textContent = o.email || 'aapke email';
+    $('d-ref').textContent = 'Order #' + cur.id.slice(0,8).toUpperCase();
+    $('dl').href = '/api/pay/download?' + new URLSearchParams({ id: cur.id, t: cur.t });
+    $('dl').classList.toggle('hide', !o.kit_ready); $('d-wait').classList.toggle('hide', !!o.kit_ready);
+    if (!o.mailed) {
+      $('d-mail-h').textContent = 'Your kit is on its way to your email';
+      $('d-mail-p').innerHTML = 'Download link <b id="d-email"></b> pe bheja ja raha hai. <b>1–2 minute</b> mein inbox mein aa jayega.'; $('d-email').textContent = o.email || 'aapke email';
+      $('tr-mail').className = 'p'; $('tr-mail').querySelector('.d').textContent = ''; $('tr-mail-t').innerHTML = 'Sending kit to your email… <small>(1–2 min)</small>';
+    }
+    if (o.mailed) {
+      clearInterval(timer);
+      $('d-mail-h').textContent = 'Kit aapke email pe bhej diya gaya ✅';
+      $('d-mail-p').textContent = 'Download link ' + (o.email || '') + ' pe bhej diya hai. Inbox check karo.';
+      $('tr-mail').className = ''; $('tr-mail').querySelector('.d').textContent = '✓'; $('tr-mail-t').textContent = 'Kit sent to your email';
+    }
+    return;
+  }
+  const first = lastView !== 'v-pay';
+  view('v-pay');
+  if (o.provider === 'razorpay') {
+    rpOrder = o.rp; $('o-amt').textContent = o.amount; $('rp-amt').textContent = o.amount.replace(/\.00$/, '');
+    $('pay-sub').textContent = o.rp && o.rp.test ? 'TEST MODE — asli paise nahi katenge' : 'UPI, card ya wallet — jo aasaan lage'; $('rpbox').classList.remove('hide'); $('upibox').classList.add('hide'); $('paid-btn').classList.add('hide'); $('claim').classList.add('hide');
+    if (contact) { $('c-email').textContent = contact.email; $('c-phone').textContent = '+91 ' + contact.phone; }
+    if (first) countdown(o.expires_at);
+    return;
+  }
+  $('o-amt').textContent = o.amount; $('o-amt2').textContent = o.amount; $('o-vpa').textContent = o.vpa;
+  $('o-vpa2').textContent = o.vpa; $('o-amt3').textContent = o.amount; $('o-amt4').textContent = o.amount;
+  if (contact) { $('c-email').textContent = contact.email; $('c-phone').textContent = '+91 ' + contact.phone; }
+  window.__upi = o.upi; window.__merchant = !!o.merchant;
+  // merchant UPI ID → one-tap pay links work; personal UPI ID → apps block pay links, so show the copy-UPI-ID steps
+  $('howto').classList.toggle('hide', !!o.merchant); $('tap').classList.toggle('hide', !o.merchant);
+  if (o.merchant) document.querySelectorAll('.app').forEach(a => a.href = (SCH[a.dataset.open] || 'upi://pay') + '?' + o.upi.split('?')[1]);
+  if (drawnQR !== o.upi) { const q = qrcode(0, 'M'); q.addData(o.upi); q.make(); $('qr').innerHTML = q.createSvgTag({ cellSize: 6, margin: 1, scalable: true }); drawnQR = o.upi; }
+  if (first) { tab(mobile ? 'apps' : 'qr'); countdown(o.expires_at); }
+  if (Date.now() > new Date(o.expires_at).getTime() + 15 * 60e3 && !procOn) clearInterval(timer); // stop polling long-expired checkouts
+}
+
+async function poll() { try { render(await api('status', { q: { id: cur.id, t: cur.t } })); } catch {} }
+function track(o) { cur = { id: o.id, t: o.t }; store.set(cur); poll(); clearInterval(timer); timer = setInterval(() => { if (document.visibilityState === 'visible' || procOn) poll(); }, 5000); }
+let procOn = false, procMsg = null, played = false;
+const MSGS = ['Bank se confirmation le rahe hain…', 'Payment aapke order se match ho raha hai…', 'Secure verification chal raha hai…', 'Kit delivery ready ho rahi hai…'];
+function showProc(){
+  if (procOn || lastView !== 'v-pay') return; procOn = true;
+  const sc = $('scene'); sc.className = 'scene'; $('okc').style.opacity = '';
+  sc.style.setProperty('--d', Math.max(120, sc.clientWidth - 34 - 20 - 52) + 'px');
+  requestAnimationFrame(() => sc.style.setProperty('--d', Math.max(120, sc.clientWidth - 34 - 20 - 52) + 'px'));
+  $('p-h').textContent = 'Processing your payment'; $('p-n').textContent = 'Is page ko band mat karo · usually ~1 minute'; $('p-x').classList.remove('hide');
+  let i = 0; $('p-s').textContent = MSGS[0];
+  clearInterval(procMsg); procMsg = setInterval(() => { i = (i + 1) % MSGS.length; $('p-s').style.opacity = 0; setTimeout(() => { $('p-s').textContent = MSGS[i]; $('p-s').style.opacity = 1; }, 300); }, 2600);
+  $('proc').classList.add('on');
+}
+function hideProc(){ procOn = false; $('proc').classList.remove('won'); clearInterval(procMsg); $('proc').classList.remove('on'); }
+function celebrate(done){
+  played = true;
+  if (!procOn) { showProcForce(); }
+  clearInterval(procMsg);
+  const sc = $('scene'); sc.classList.add('win'); $('proc').classList.add('won');
+  $('p-h').textContent = 'Payment received'; $('p-s').textContent = 'Confirming with bank…'; $('p-x').classList.add('hide');
+  setTimeout(() => {
+    sc.classList.add('win2');
+    $('p-h').textContent = 'Payment confirmed!'; $('p-s').textContent = 'Kit aapke email pe bheja ja raha hai';
+    $('p-n').textContent = 'Redirecting…';
+    const cols = ['#16A34A','#2563EB','#FACC15','#F97316','#22C55E'];
+    for (let k = 0; k < 16; k++) { const b = document.createElement('i'); b.className = 'burst'; const a = k / 16 * Math.PI * 2, r = 60 + Math.random() * 30;
+      b.style.cssText = `background:${cols[k % 5]};--x:calc(-50% + ${Math.cos(a) * r}px);--y:calc(-50% + ${Math.sin(a) * r}px)`; sc.appendChild(b); setTimeout(() => b.remove(), 900); }
+  }, 950);
+  setTimeout(() => { hideProc(); done(); }, 2500);
+}
+function showProcForce(){ const lv = lastView; lastView = 'v-pay'; showProc(); lastView = lv; }
+$('p-x').onclick = () => { hideProc(); procDismissedAt = Date.now(); };
+let procDismissedAt = 0;
+function verifying(){
+  if (Date.now() - procDismissedAt > 4000) showProc(); $('wait').classList.add('verify'); $('w-t').textContent = 'Verifying your payment…'; $('w-prog').classList.remove('hide'); $('w-p').innerHTML = 'Bank se confirmation aa raha hai. Isme ~1 minute lagta hai, page band mat karo.'; }
+
+const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+const PKG = {gpay: ['com.google.android.apps.nbu.paisa.user', 'gpay://'], phonepe: ['com.phonepe.app', 'phonepe://'], paytm: ['net.one97.paytm', 'paytmmp://']};
+const SCH = {gpay: 'tez://upi/pay', phonepe: 'phonepe://pay', paytm: 'paytmmp://pay', any: 'upi://pay'};
+document.querySelectorAll('.app').forEach(a => a.addEventListener('click', (e) => {
+  if (window.__merchant) { setTimeout(verifying, 1500); return; } // let the pay link open
+  e.preventDefault(); const k = a.dataset.open; const vpa = $('o-vpa2').textContent;
+  try { navigator.clipboard?.writeText(vpa); } catch {}
+  toast('UPI ID copy ho gaya — app mein "Pay UPI ID" pe paste karo');
+  const p = PKG[k];
+  if (p) setTimeout(() => { location.href = isIOS ? p[1] : `intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=${p[0]};end`; }, 700);
+  setTimeout(verifying, 2500);
+}));
+$('paid-btn').onclick = () => { procDismissedAt = 0; verifying(); poll(); };
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && lastView === 'v-pay') { verifying(); poll(); } });
+document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => tab(b.dataset.tab));
+document.addEventListener('click', (e) => {
+  const g = e.target.dataset && e.target.dataset.goto; if (g) { e.preventDefault(); tab(g); }
+  const id = e.target.dataset && e.target.dataset.copy; if (id) { navigator.clipboard?.writeText($(id).textContent); toast('UPI ID copied'); }
+  if (e.target.dataset && e.target.dataset.copyamt) { navigator.clipboard?.writeText($('o-amt4').textContent); toast('Amount copied'); }
+});
+
+const GO_HTML = $('go').innerHTML;
+function openEdit(e) {
+  if (e) e.preventDefault(); if (!contact || !cur) return;
+  editing = true; hideProc();
+  $('email').value = contact.email; $('phone').value = contact.phone || ''; $('agree').checked = true;
+  $('f-h').textContent = 'Details badlo'; $('f-sub').textContent = 'Amount wahi rahega. Sahi email daalo.';
+  $('go').innerHTML = '<span>Save & continue</span>'; $('f-back').classList.remove('hide'); $('f-err').textContent = '';
+  lastView = ''; view('v-form'); $('email').focus();
+}
+function closeEdit() {
+  editing = false; $('f-h').textContent = 'Contact details'; $('f-sub').textContent = 'Kit ka download link isi email pe aayega.';
+  $('go').innerHTML = GO_HTML; $('go-amt').textContent = price; $('f-back').classList.add('hide');
+}
+$('edit-btn').onclick = openEdit; $('rp-pay').onclick = openRp; $('edit-done').onclick = openEdit;
+$('f-back').onclick = () => { closeEdit(); poll(); };
+$('go').onclick = async () => {
+  $('f-err').textContent = ''; ['f-email','f-phone'].forEach(f => $(f).classList.remove('bad'));
+  const email = $('email').value.trim(), phone = $('phone').value.replace(/\D/g,'').replace(/^(91|0)(?=\d{10}$)/,'');
+  if (!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(email)) { $('f-email').classList.add('bad'); $('f-err').textContent = 'Sahi email daalo'; return; }
+
+  if (!$('agree').checked) { $('f-err').textContent = 'Terms pe tick karo'; return; }
+  $('go').classList.add('load');
+  if (editing) {
+    try { const r = await api('update', { body: { id: cur.id, t: cur.t, email, phone } }); contact = { email, phone }; closeEdit(); toast(r.resend ? 'Kit naye email pe bhej rahe hain' : 'Details update ho gaye ✓'); track({ ...cur }); }
+    catch (e) { $('f-err').textContent = e.message; }
+    $('go').classList.remove('load'); return;
+  }
+  try { const o = await api('create', { body: { slug, email, phone, test: qs.get('rptest') === '1' } }); track(o); if (o.provider === 'razorpay') { rpOrder = o.rp; contact = { email, phone }; setTimeout(openRp, 50); } }
+  catch (e) { $('f-err').textContent = e.message; }
+  $('go').classList.remove('load');
+};
+$('claim-go').onclick = async () => {
+  $('c-msg').textContent = ''; $('claim-go').classList.add('load');
+  try {
+    const r = await api('claim', { body: { id: cur.id, t: cur.t, utr: $('utr').value } });
+    const m = { paid: '', not_seen: 'Bank se ye payment abhi tak nahi aaya. 1–2 min mein page khud update ho jayega.', used: 'Ye UTR pehle hi kisi order mein use ho chuka hai.', low: 'Is UTR ka amount order se kam hai.', old: 'Ye payment is order se pehle ka hai.' };
+    $('c-msg').textContent = m[r.result] ?? 'Check ho raha hai…'; poll();
+  } catch (e) { $('c-msg').textContent = e.message; }
+  $('claim-go').classList.remove('load');
+};
+
+(async () => {
+  try {
+    const p = await api('product', { q: { slug } });
+    price = p.price;
+    document.title = p.title + ' · Checkout';
+    $('p-title').textContent = p.title; $('p-desc').textContent = p.description || '';
+    $('s-price').textContent = p.price; $('s-total').textContent = p.price; $('go-amt').textContent = p.price;
+    const saved = qs.get('o') && qs.get('t') ? { id: qs.get('o'), t: qs.get('t') } : store.get();
+    if (saved) {
+      try { const o = await api('status', { q: saved }); if (o.paid || new Date(o.expires_at) > Date.now()) { track({ ...saved }); return; } } catch {}
+    }
+    view('v-form');
+  } catch (e) { if (/not found/i.test(String(e && e.message || e))) { location.replace('/guides'); return; } $('p-title').textContent = 'Unavailable'; $('v-load').innerHTML = '<h1>Ye product abhi available nahi hai</h1><p class="sub">Link check karo ya @{{IG_HANDLE}} ko DM karo.</p>'; }
+})();
+</script>
+</body>
+</html>

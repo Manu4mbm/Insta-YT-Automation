@@ -1,0 +1,20 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/publish",
+      "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/cron/refresh-token",
+      "schedule": "30 3 * * 1"
+    }
+  ],
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/buy/:slug",
+      "destination": "/buy"
+    }
+  ],
+  "redirects": []
+}

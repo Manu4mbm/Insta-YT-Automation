@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Refund Prompt: AI se complaint</title>
+<meta name="description" content="Free AI prompt: atka hua refund wapas lene ke liye formal complaint, National Consumer Helpline ka text aur consumer court draft.">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Inter:wght@400;600;800&family=Instrument+Serif:ital@1&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F1ECE2;--ink:#1A1815;--clay:#D9673C;--mute:#6f685d;--line:#D6CDBD;--green:#2E9C67;--red:#E0443A;--yellow:#F5C443}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,sans-serif;color:var(--ink);background:var(--paper);font-size:16px;line-height:1.5;
+  background-image:radial-gradient(var(--line) 1.2px,transparent 1.4px);background-size:22px 22px}
+main{max-width:680px;margin:0 auto;padding:28px 18px 60px}
+.kick{font-family:"Space Mono",monospace;font-size:13px;letter-spacing:.18em;color:var(--clay)}
+h1{font-family:Montserrat;font-weight:900;font-size:38px;line-height:1.02;margin:8px 0 10px;letter-spacing:-.5px}
+h1 em{font-family:"Instrument Serif";font-style:italic;font-weight:400;color:var(--clay)}
+h2{font-family:Montserrat;font-weight:900;font-size:22px;margin:30px 0 12px;display:flex;align-items:center;gap:10px}
+.n{width:32px;height:32px;border-radius:9px;background:var(--clay);color:#fff;border:2px solid var(--ink);display:inline-flex;align-items:center;justify-content:center;font-family:Montserrat;font-weight:900;font-size:16px;flex-shrink:0}
+.card{background:#fff;border:2px solid var(--ink);border-radius:18px;padding:16px 18px;box-shadow:6px 7px 0 var(--ink);margin:12px 0}
+.prompt{background:var(--ink);color:#F3EEE6;border-radius:18px;padding:18px;font-family:"Space Mono",monospace;font-size:13.5px;line-height:1.55;white-space:pre-wrap;position:relative;border:2px solid var(--ink)}
+button{font-family:Montserrat;font-weight:900;font-size:16px;background:var(--yellow);color:var(--ink);border:2px solid var(--ink);border-radius:12px;padding:12px 18px;box-shadow:4px 4px 0 var(--ink);cursor:pointer;width:100%;margin:12px 0 0}
+button.ok{background:var(--green);color:#fff}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.chan{background:#fff;border:2px solid var(--ink);border-radius:14px;padding:12px;font-weight:800}
+.chan small{display:block;font-weight:400;color:var(--mute);font-size:13px}
+a{color:var(--clay);font-weight:800}
+.warn{background:#FFF4D6;border:2px dashed #B7791F;border-radius:14px;padding:12px 14px;font-size:14px}
+ul{padding-left:20px;margin:6px 0}
+footer{margin-top:36px;font-size:13px;color:var(--mute);text-align:center}
+</style></head><body><main>
+<div class="kick">FREE PROMPT · @{{IG_HANDLE}}</div>
+<h1>Refund atka hai? <em>AI se complaint likhwao.</em></h1>
+<p>Ye prompt Claude ya ChatGPT mein daalo. Ye aapki problem ko ek formal complaint, helpline ke liye short text, aur zarurat pade to consumer court ka draft bana deta hai.</p>
+
+<h2><span class="n">1</span>Prompt copy karo</h2>
+<div class="prompt" id="p">Act as an expert in Indian consumer rights. Help me get my refund by writing a formal complaint.
+
+My details: [Name, city, email/phone]
+Company: [company name + website/app]
+Order / booking / transaction: [order ID, date, amount, payment mode]
+What went wrong: [explain the problem in 2–3 lines]
+What I already tried: [dates of calls/emails/chats, ticket numbers, what they replied]
+What I want: [full refund / replacement / charge reversal + compensation if any]
+
+Please write:
+1. A firm but polite complaint email to the company's grievance officer, with a subject line and a clear deadline of 15 days.
+2. A short version of the same complaint that I can paste on the National Consumer Helpline (website, app or WhatsApp).
+3. A simple timeline of events, date-wise.
+4. A list of documents and screenshots I should attach.
+5. If the company still doesn't resolve it: a draft complaint for the District Consumer Commission that I can file on e-Jagriti — facts of the case, deficiency in service / unfair trade practice under the Consumer Protection Act, 2019, and the relief I am asking for.
+
+Use simple language. Do not invent any facts — if something is missing, ask me first.</div>
+<button id="b" onclick="cp()">⧉ Copy prompt</button>
+
+<h2><span class="n">2</span>Pehle company ko bhejo</h2>
+<div class="card">AI wala email company ke <b>grievance officer</b> ko bhejo. Unka email aksar app/website ke "Grievance" ya "Contact us" page pe hota hai. Screenshot aur order details attach karo, aur ticket number save rakho.</div>
+
+<h2><span class="n">3</span>Na sune to National Consumer Helpline</h2>
+<div class="grid">
+  <div class="chan">📞 1915 / 1800-11-4000<small>toll-free · 8 AM–8 PM</small></div>
+  <div class="chan">💬 WhatsApp<small>+91 88000 01915</small></div>
+  <div class="chan">📱 NCH App / UMANG<small>app se complaint</small></div>
+  <div class="chan">🌐 Website<small><a href="https://consumerhelpline.gov.in" target="_blank" rel="noopener">consumerhelpline.gov.in</a></small></div>
+</div>
+<p>Prompt ka short version (point 2) yahan paste karo. Complaint number zaroor note karo.</p>
+
+<h2><span class="n">4</span>Phir bhi na maane: consumer court</h2>
+<div class="card">Point 5 wala draft lekar <a href="https://e-jagriti.gov.in" target="_blank" rel="noopener">e-Jagriti</a> portal pe District Consumer Commission mein online complaint file kar sakte ho. Filing ke rules aur fees portal pe check karo.</div>
+
+<h2>📎 Ye ready rakho</h2>
+<ul><li>Order/booking ID, invoice, payment proof</li><li>Chat/email/call ke screenshots (date ke saath)</li><li>Ticket ya complaint numbers</li><li>Product ki photo/video (agar damaged hai)</li></ul>
+
+<p class="warn">⚠️ Ye guide general jaankari ke liye hai, legal advice nahi. Bade amount ya complicated case mein kisi lawyer se salah lo. AI ka draft bhejne se pehle ek baar khud padh ke check karo.</p>
+
+<footer>Made by <a href="https://instagram.com/{{IG_HANDLE}}">@{{IG_HANDLE}}</a> · aur free guides: <a href="/guides">/guides</a></footer>
+</main>
+<script>
+function cp(){const t=document.getElementById('p').innerText;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(ok,()=>{const r=document.createRange();r.selectNodeContents(document.getElementById('p'));const s=getSelection();s.removeAllRanges();s.addRange(r);document.execCommand('copy');ok()})}
+function ok(){const b=document.getElementById('b');b.textContent='✓ Copied! Ab Claude/ChatGPT mein paste karo';b.className='ok'}
+</script>
+</body></html>

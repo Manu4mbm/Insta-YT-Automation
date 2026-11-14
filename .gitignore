@@ -1,0 +1,8 @@
+.env
+.env.txt
+.env.*
+!.env.example
+env-setup.txt
+node_modules/
+*.mp4
+.vercel
