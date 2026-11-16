@@ -1,5 +1,6 @@
 import { env, GRAPH_VERSION } from './env.js';
 import { getSetting } from './db.js';
+import { currentAccount, MAIN } from './account.js';
 
 /**
  * IG_API_HOST selects the Meta setup:
@@ -14,9 +15,17 @@ export const isUnified = () => HOST === 'graph.facebook.com';
 export const PROFILE_FIELDS = () => (isUnified() ? 'id,username,name,followers_count,follows_count,media_count' : 'user_id,username,name,followers_count,follows_count,media_count');
 
 export async function igToken(): Promise<string> {
+  const a = currentAccount();
+  if (a !== MAIN) { const t = await getSetting(`ig_access_token:${a}`); if (t) return t; }
   return (await getSetting('ig_access_token')) || env('IG_ACCESS_TOKEN');
 }
 export async function igUserId(): Promise<string> {
+  const a = currentAccount();
+  if (a !== MAIN) {
+    const id = await getSetting(`ig_user_id:${a}`);
+    if (!id) throw new Error(`Instagram account "${a}" is not configured (settings ig_user_id:${a})`);
+    return id;
+  }
   return (await getSetting('ig_user_id')) || env('IG_USER_ID');
 }
 

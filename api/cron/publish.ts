@@ -3,6 +3,7 @@ import { db } from '../../lib/db.js';
 import { ig, igUserId } from '../../lib/ig.js';
 import { snapshotMetrics, autoPaid } from '../../lib/metrics.js';
 import { isCronAuthorized } from '../../lib/auth.js';
+import { listAccounts, runAs } from '../../lib/account.js';
 
 export const config = { maxDuration: 60 };
 
@@ -85,19 +86,52 @@ async function tryFinish(igId: string, post: any): Promise<'published' | 'pendin
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!isCronAuthorized(req)) return res.status(401).json({ error: 'unauthorized' });
-  const igId = await igUserId();
   const log: string[] = [];
-
   const t0 = Date.now();
+  const created: any[] = [];
+
+  // Steps 0–2 per Instagram account (posts.account); each account has its own publishing quota.
+  for (const acct of await listAccounts()) {
+    await runAs(acct, async () => {
+      try { await prepareAccount(acct, log, created); }
+      catch (e: any) { log.push(`[${acct}] skipped: ${e.message}`); }
+    });
+  }
+
+  // 3) Short in-run poll so typical reels publish in the same run
+  const deadline = Date.now() + 40_000;
+  let pending = created;
+  while (pending.length && Date.now() < deadline) {
+    await sleep(10_000);
+    const next: any[] = [];
+    for (const p of pending) {
+      try {
+        const r = await runAs(p.account, async () => tryFinish(await igUserId(), p));
+        if (r === 'pending') next.push({ ...p, attempts: (p.attempts ?? 0) + 1 });
+        else log.push(`${p.reel_slug}: ${r}`);
+      } catch (e: any) {
+        log.push(`${p.reel_slug}: poll failed ${e.message}`);
+      }
+    }
+    pending = next;
+  }
+
+  try { await snapshotMetrics(log, t0 + 45000); } catch (e: any) { log.push(`metrics error ${e.message}`); }
+  try { await autoPaid(log); } catch (e: any) { log.push(`auto-paid error ${e.message}`); }
+  return res.status(200).json({ ok: true, log });
+}
+
+async function prepareAccount(acct: string, log: string[], created: any[]) {
+  const igId = await igUserId();
   // 0) Repair: published on Instagram but our request timed out before we saved the media id
-  const { data: orphans } = await db().from('posts').select('*').eq('status', 'published').is('ig_media_id', null)
+  const { data: orphans } = await db().from('posts').select('*').eq('account', acct).eq('status', 'published').is('ig_media_id', null)
     .not('container_id', 'is', null).gte('scheduled_at', new Date(Date.now() - 2 * 864e5).toISOString());
   for (const p of orphans ?? []) {
     try { log.push(`${p.reel_slug}: media id recovered ${await recoverMediaId(igId, p)}`); } catch (e: any) { log.push(`${p.reel_slug}: recover failed ${e.message}`); }
   }
 
   // 1) Containers already created in earlier runs
-  const { data: inFlight } = await db().from('posts').select('*').eq('status', 'container').order('scheduled_at');
+  const { data: inFlight } = await db().from('posts').select('*').eq('account', acct).eq('status', 'container').order('scheduled_at');
   for (const p of inFlight ?? []) {
     try {
       log.push(`${p.reel_slug}: ${await tryFinish(igId, p)}`);
@@ -107,19 +141,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   // 2) Due posts → create containers
-  let quota = await publishingQuotaLeft(igId);
   const { data: due } = await db()
     .from('posts')
     .select('*')
+    .eq('account', acct)
     .eq('status', 'queued')
     .lte('scheduled_at', new Date(Date.now() + PREP_MS).toISOString())
     .order('scheduled_at')
     .limit(MAX_PUBLISH_PER_RUN);
+  if (!due?.length) return;
+  let quota = await publishingQuotaLeft(igId);
 
-  const created: any[] = [];
-  for (const p of due ?? []) {
+  for (const p of due) {
     if (quota <= 0) {
-      log.push('publishing quota reached, waiting');
+      log.push(`[${acct}] publishing quota reached, waiting`);
       break;
     }
     try {
@@ -134,32 +169,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       await db().from('posts').update({ status: 'container', container_id: c.id, attempts: 0 }).eq('id', p.id);
       created.push({ ...p, container_id: c.id, attempts: 0 });
       quota--;
-      log.push(`${p.reel_slug}: container ${c.id}`);
+      log.push(`[${acct}] ${p.reel_slug}: container ${c.id}`);
     } catch (e: any) {
       await markError(p.id, e.message);
       log.push(`${p.reel_slug}: error ${e.message}`);
     }
   }
-
-  // 3) Short in-run poll so typical reels publish in the same run
-  const deadline = Date.now() + 40_000;
-  let pending = created;
-  while (pending.length && Date.now() < deadline) {
-    await sleep(10_000);
-    const next: any[] = [];
-    for (const p of pending) {
-      try {
-        const r = await tryFinish(igId, p);
-        if (r === 'pending') next.push({ ...p, attempts: (p.attempts ?? 0) + 1 });
-        else log.push(`${p.reel_slug}: ${r}`);
-      } catch (e: any) {
-        log.push(`${p.reel_slug}: poll failed ${e.message}`);
-      }
-    }
-    pending = next;
-  }
-
-  try { await snapshotMetrics(log, t0 + 45000); } catch (e: any) { log.push(`metrics error ${e.message}`); }
-  try { await autoPaid(log); } catch (e: any) { log.push(`auto-paid error ${e.message}`); }
-  return res.status(200).json({ ok: true, log });
 }

@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { db } from '../../lib/db.js';
 import { ig, igUserId } from '../../lib/ig.js';
+import { listAccounts, runAs } from '../../lib/account.js';
 import { isCronAuthorized } from '../../lib/auth.js';
 import { handleComment, handleMessaging, pickRule, allComments, userFollows } from '../webhook.js';
 import { inCooldown, cooldownUntil, isRateLimit } from '../../lib/throttle.js';
@@ -22,6 +23,13 @@ export const config = { maxDuration: 60 };
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!isCronAuthorized(req)) return res.status(401).json({ error: 'unauthorized' });
+  // Several accounts: one account per run, round-robin by minute (webhooks stay real-time for all).
+  const accounts = await listAccounts();
+  const acct = accounts[Math.floor(Date.now() / 60000) % accounts.length];
+  return runAs(acct, () => pollAccount(req, res, acct));
+}
+
+async function pollAccount(req: VercelRequest, res: VercelResponse, acct: string) {
   const igId = await igUserId();
   const log: string[] = [];
   const since7 = new Date(Date.now() - 7 * 864e5).toISOString();
@@ -98,7 +106,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   } catch (e: any) { log.push(`pending deliver error ${e.message}`); }
 
   // 1) comments
-  const { data: posts } = await db().from('posts').select('id, reel_slug, ig_media_id').eq('status', 'published').gte('published_at', since7).order('published_at', { ascending: false }); // newest reel first — fresh comments never wait behind old backlog
+  const { data: posts } = await db().from('posts').select('id, reel_slug, ig_media_id').eq('status', 'published').eq('account', acct).gte('published_at', since7).order('published_at', { ascending: false }); // newest reel first — fresh comments never wait behind old backlog
   // Rotate the starting reel every minute (newest first on even minutes) so a busy new reel never starves older reels' backlog.
   const rot = (posts ?? []).length ? new Date().getMinutes() % (posts ?? []).length : 0;
   const rotated = new Date().getMinutes() % 2 === 0 ? (posts ?? []) : [...(posts ?? []).slice(rot), ...(posts ?? []).slice(0, rot)];

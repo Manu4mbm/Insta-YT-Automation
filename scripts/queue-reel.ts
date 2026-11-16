@@ -84,7 +84,7 @@ async function main() {
 
   const { data: row, error } = await sb
     .from('posts')
-    .insert({ reel_slug: slug, video_url: videoUrl, cover_url: coverUrl, caption, keyword, scheduled_at: scheduledAt.toISOString(), first_comment: post.first_comment ?? null })
+    .insert({ account: arg('account') || 'main', reel_slug: slug, video_url: videoUrl, cover_url: coverUrl, caption, keyword, scheduled_at: scheduledAt.toISOString(), first_comment: post.first_comment ?? null })
     .select('id')
     .single();
   if (error) throw new Error(`Insert post: ${error.message}`);

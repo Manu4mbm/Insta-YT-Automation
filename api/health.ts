@@ -2,11 +2,18 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { db } from '../lib/db.js';
 import { ig, igUserId, isUnified } from '../lib/ig.js';
 import { isCronAuthorized } from '../lib/auth.js';
+import { runAs, listAccounts } from '../lib/account.js';
 
 /** Protected health check: token valid? IG_USER_ID matches? Supabase reachable? Never returns secrets. */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!isCronAuthorized(req)) return res.status(401).json({ error: 'unauthorized' });
-  const out: Record<string, unknown> = {};
+  const acct = String(req.query.account ?? 'main');
+  return runAs(acct, () => check(res, acct));
+}
+
+async function check(res: VercelResponse, acct: string) {
+  const out: Record<string, unknown> = { account: acct };
+  try { out.accounts = await listAccounts(); } catch { /* settings table unreachable: reported below */ }
   const missing = ['IG_USER_ID', 'IG_ACCESS_TOKEN', 'META_APP_SECRET', 'WEBHOOK_VERIFY_TOKEN', 'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY']
     .filter((k) => !process.env[k]);
   out.missing_env = missing;

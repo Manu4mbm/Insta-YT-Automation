@@ -4,6 +4,7 @@ import crypto from 'node:crypto';
 import { env } from '../lib/env.js';
 import { db } from '../lib/db.js';
 import { ig, igUserId } from '../lib/ig.js';
+import { accountForIgId, runAs } from '../lib/account.js';
 import { isRateLimit, PUBLIC_REPLIES } from '../lib/throttle.js';
 import { canSend, send, sendLink, vary, isHot } from '../lib/send.js';
 
@@ -254,14 +255,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const igId = await igUserId();
     for (const entry of payload?.entry ?? []) {
+      await runAs(await accountForIgId(entry?.id), async () => {
+      const igId = await igUserId();
       // diagnostics (no message text / personal data logged)
       console.log('webhook', JSON.stringify({object: payload?.object, fields: (entry?.changes ?? []).map((c: any) => c?.field), messaging: (entry?.messaging ?? []).length}));
       for (const change of entry?.changes ?? []) {
         if (change?.field === 'comments') await handleComment(igId, entry?.id, change.value);
       }
       for (const m of entry?.messaging ?? []) await handleMessaging(igId, m);
+      });
     }
   } catch (e) {
     console.error('webhook error', (e as Error).message);
