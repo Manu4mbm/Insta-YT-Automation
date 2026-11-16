@@ -42,7 +42,7 @@ const KEYS: K[] = [
   [37.4, P.jun[0] + 30, P.jun[1] + 10, 2.2], [42.3, P.jun[0] + 30, P.jun[1], 2.4],
   [43.6, P.hyd[0], P.hyd[1] + 30, 1.95], [50.4, P.hyd[0], P.hyd[1] + 20, 2.1],
   [51.7, jkC[0], jkC[1] + 40, 1.45], [57.9, jkC[0], jkC[1] + 30, 1.6],
-  [59.3, full[0], full[1], 0.6], [65.6, full[0], full[1] - 10, 0.57], [71.2, full[0], full[1] - 20, 0.54],
+  [59.3, full[0], full[1], 0.6], [65.6, full[0], full[1] - 10, 0.57], [71.7, full[0], full[1] - 20, 0.54],
 ];
 const cam = (t: number) => {
   let i = 0;
@@ -415,7 +415,7 @@ export const Reel: React.FC = () => {
         return (
           <Card k={k} style={{ left: 120, top: 560, width: 840, padding: "40px 40px 34px", textAlign: "center", transform: `scale(${0.6 + 0.4 * k}) rotate(-2deg)` }}>
             <div style={{ fontFamily: SERIF, fontWeight: 900, fontSize: 52, color: INK, lineHeight: 1.15 }}>AISI AUR KAHANIYON<br />KE LIYE</div>
-            <div style={{ display: "inline-block", marginTop: 28, border: "7px solid #b3261e", color: "#b3261e", borderRadius: 10, padding: "12px 34px", fontFamily: SERIF, fontWeight: 900, fontSize: 70, transform: `scale(${lerp(1.8, 1, eout(ramp(t, 67.2, 67.6)))}) rotate(-4deg)`, opacity: ramp(t, 67.2, 67.4) }}>COMMENT<br />"PATEL"</div>
+            <div style={{ display: "inline-block", marginTop: 28, border: "7px solid #b3261e", color: "#b3261e", borderRadius: 10, padding: "12px 34px", fontFamily: SERIF, fontWeight: 900, fontSize: 70, transform: `scale(${lerp(1.8, 1, eout(ramp(t, 67.2, 67.6)))}) rotate(-4deg)`, opacity: ramp(t, 67.2, 67.4) }}>COMMENT<br />"SARDAR"</div>
             <div style={{ fontFamily: ITAL, fontStyle: "italic", fontWeight: 600, fontSize: 40, color: "#5a4a2a", marginTop: 26, opacity: ramp(t, 69.0, 69.4) }}>Follow · India by Bharat</div>
           </Card>
         );

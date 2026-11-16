@@ -26,12 +26,14 @@ export const SEGS: [number, number, string][] = [
   [58.44, 59.91, "565 tukde..."],
   [60.55, 61.21, "ek naksha."],
   [61.82, 65.07, "Isliye Patel kehlaye Bharat ke Loh Purush."],
-  [65.81, 71.08, "Aisi aur kahaniyon ke liye comment karo PATEL, aur follow karo India by Bharat."],
+  [65.81, 68.65, "Aisi aur kahaniyon ke liye comment karo SARDAR,"],
+  [69.04, 69.84, "aur follow karo"],
+  [70.12, 71.4, "India by Bharat."],
 ];
 
 const NUMW: Record<string, number> = { "15": 6, "1947": 18, "1948": 18, "565": 16, "13": 5, "17": 5, "26": 7 };
 export const HILITE = new Set(
-  "565 RIYASATEIN INDIA PAKISTAN AZAADI PATEL MENON INSTRUMENT ACCESSION RAKSHA VIDESH SANCHAR JUNAGADH JANMAT SANGRAH HYDERABAD POLO NIZAM JAMMU-KASHMIR LOH PURUSH 1947 1948 TEEN".split(" "),
+  "565 RIYASATEIN INDIA PAKISTAN AZAADI PATEL MENON INSTRUMENT ACCESSION RAKSHA VIDESH SANCHAR JUNAGADH JANMAT SANGRAH HYDERABAD POLO NIZAM JAMMU-KASHMIR LOH PURUSH SARDAR 1947 1948 TEEN".split(" "),
 );
 
 export type Word = { w: string; s: number; e: number };
