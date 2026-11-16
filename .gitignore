@@ -6,3 +6,4 @@ env-setup.txt
 node_modules/
 *.mp4
 .vercel
+!public/media/*.mp4
