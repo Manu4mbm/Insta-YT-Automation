@@ -16,7 +16,11 @@ export const PROFILE_FIELDS = () => (isUnified() ? 'id,username,name,followers_c
 
 export async function igToken(): Promise<string> {
   const a = currentAccount();
-  if (a !== MAIN) { const t = await getSetting(`ig_access_token:${a}`); if (t) return t; }
+  if (a !== MAIN) {
+    // Per-account token: Vercel env IG_ACCESS_TOKEN_<SLUG> (e.g. IG_ACCESS_TOKEN_PROTECH), or settings ig_access_token:<slug>.
+    const t = process.env[`IG_ACCESS_TOKEN_${a.toUpperCase().replace(/-/g, '_')}`] || (await getSetting(`ig_access_token:${a}`));
+    if (t) return t;
+  }
   return (await getSetting('ig_access_token')) || env('IG_ACCESS_TOKEN');
 }
 export async function igUserId(): Promise<string> {
