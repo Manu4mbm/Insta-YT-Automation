@@ -199,3 +199,8 @@ begin
   return 'paid';
 end $function$;
 revoke all on function public.pay_create_order(text,text,text), public.pay_match_alert(text), public.pay_claim_utr(uuid,text) from public, anon, authenticated;
+
+-- Multi-account (settings ig_user_id:<slug>); 'main' = IG_USER_ID env
+alter table public.posts    add column if not exists account text not null default 'main';
+alter table public.yt_posts add column if not exists account text not null default 'main';
+create index if not exists posts_account_status_idx on public.posts (account, status, scheduled_at);
