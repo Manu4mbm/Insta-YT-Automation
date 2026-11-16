@@ -10,11 +10,12 @@ import ytDirect from '../../lib/handlers/admin/yt-direct.js';
 import deleteMedia from '../../lib/handlers/admin/delete-media.js';
 import account from '../../lib/handlers/admin/account.js';
 import ytThumbnail from '../../lib/handlers/admin/yt-thumbnail.js';
+import ytReschedule from '../../lib/handlers/admin/yt-reschedule.js';
 
 // One function for all admin routes (Vercel Hobby = max 12 functions).
 export const config = { maxDuration: 60 };
 const ROUTES: Record<string, (req: VercelRequest, res: VercelResponse) => unknown> = {
-  comments, 'paid-watch': paidWatch, insights, resend, 'upload-url': uploadUrl, youtube, 'yt-channel': ytChannel, 'yt-direct': ytDirect, 'delete-media': deleteMedia, account, 'yt-thumbnail': ytThumbnail,
+  comments, 'paid-watch': paidWatch, insights, resend, 'upload-url': uploadUrl, youtube, 'yt-channel': ytChannel, 'yt-direct': ytDirect, 'delete-media': deleteMedia, account, 'yt-thumbnail': ytThumbnail, 'yt-reschedule': ytReschedule,
 };
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const fn = ROUTES[String(req.query.op ?? '')];
