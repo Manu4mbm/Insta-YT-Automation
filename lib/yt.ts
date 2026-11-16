@@ -16,7 +16,7 @@ export function ytAuthUrl(state: string) {
   u.searchParams.set('response_type', 'code');
   u.searchParams.set('scope', YT_SCOPES.join(' '));
   u.searchParams.set('access_type', 'offline');
-  u.searchParams.set('prompt', 'consent');
+  u.searchParams.set('prompt', 'select_account consent'); // always show the account + brand-channel chooser
   u.searchParams.set('include_granted_scopes', 'true');
   u.searchParams.set('state', state);
   return u.toString();
