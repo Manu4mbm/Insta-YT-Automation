@@ -26,3 +26,8 @@
 ## Posting log
 | Date | Reel | Slot (IST) | Trial? | 6h views | Notes |
 |---|---|---|---|---|---|
+
+## 2026-11-16 — kit pushed to repo
+- `kit/` = laptop AI-Reels-Automation-Kit (skills, video-studio/animo-kit incl. india-unification project, tools/voicestudio-mcp, .mcp.json for VoiceStudio). Excluded: .env, node_modules, renders, zip, laptop copy of automation (repo root is canonical). `.vercelignore` keeps kit/ out of Vercel deploys.
+- VoiceStudio: built-in MCP at http://127.0.0.1:3900/mcp/ (Claude Code via .mcp.json). Cloud chat needs desktop-config bridge (mcp-remote) — not yet connected.
+- Pending: india-unification vo.wav → map reel render → schedule IG/YT (CTA PATEL, DM rule needed).
