@@ -31,3 +31,10 @@
 - `kit/` = laptop AI-Reels-Automation-Kit (skills, video-studio/animo-kit incl. india-unification project, tools/voicestudio-mcp, .mcp.json for VoiceStudio). Excluded: .env, node_modules, renders, zip, laptop copy of automation (repo root is canonical). `.vercelignore` keeps kit/ out of Vercel deploys.
 - VoiceStudio: built-in MCP at http://127.0.0.1:3900/mcp/ (Claude Code via .mcp.json). Cloud chat needs desktop-config bridge (mcp-remote) — not yet connected.
 - Pending: india-unification vo.wav → map reel render → schedule IG/YT (CTA PATEL, DM rule needed).
+
+## 2026-11-17 — session log
+- Published: india-unification (16 Nov 20:00), asean-manila (17 Nov 09:00), ind-pak-rivalry IG (17 Nov 16:30, owner-supplied video).
+- Queued: jaipur-300 IG + YT long (18 Nov 13:00 IST); sixgen-race IG + YT Short (19 Nov 13:30 IST, English, 62 s).
+- Added admin ops: yt-reschedule, yt-channel now returns per-video stats.
+- Learnings: 30–40 s shorts get ~1.2k views; >70 s and "giant hand" style underperform. IG insights blocked (no insights permission) — likes only.
+- Project sources: /home/claude/work/{jaipur,asean,sixgen} (Remotion). sixgen = dark radar world-map template, reusable for defence topics.
