@@ -18,6 +18,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (up) {
         const pl = await yt<any>('GET', 'playlistItems', { part: 'contentDetails,snippet,status', playlistId: up, maxResults: '50' });
         videos = (pl.items ?? []).map((i: any) => ({ id: i.contentDetails?.videoId, title: i.snippet?.title, published: i.contentDetails?.videoPublishedAt, privacy: i.status?.privacyStatus }));
+        const ids = videos.map((v) => v.id).filter(Boolean);
+        if (ids.length) {
+          const st = await yt<any>('GET', 'videos', { part: 'statistics,contentDetails', id: ids.join(',') });
+          const by: Record<string, any> = {};
+          for (const x of st.items ?? []) by[x.id] = { ...x.statistics, duration: x.contentDetails?.duration };
+          videos = videos.map((v) => ({ ...v, ...(by[v.id] ?? {}) }));
+        }
       }
       return res.status(200).json({ id: c.id, title: c.snippet?.title, customUrl: c.snippet?.customUrl, description: c.snippet?.description, country: c.snippet?.country, branding: c.brandingSettings?.channel, hasBanner: Boolean(c.brandingSettings?.image?.bannerExternalUrl), stats: c.statistics, videos });
     }
