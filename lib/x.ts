@@ -1,6 +1,10 @@
 import crypto from 'node:crypto';
 import { env } from './env.js';
 import { getSetting, setSetting } from './db.js';
+import { currentAccount, MAIN } from './account.js';
+
+/** Settings key for the current account: `x_refresh_token` (main) or `x_refresh_token:<slug>`. */
+export const xKey = (base: string, acct = currentAccount()) => (acct === MAIN ? base : `${base}:${acct}`);
 
 /** X (Twitter) API v2 — OAuth 2.0 (PKCE, confidential client) + chunked video upload + post. */
 export const X_SCOPES = ['tweet.read', 'tweet.write', 'users.read', 'media.write', 'offline.access'];
@@ -36,18 +40,19 @@ async function tokenCall(params: Record<string, string>) {
   const j: any = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(`X token: ${j.error_description || j.error || res.status}`);
   // X rotates refresh tokens: always store the newest one
-  if (j.refresh_token) await setSetting('x_refresh_token', j.refresh_token);
-  cached = { token: j.access_token, exp: Date.now() + (j.expires_in ?? 7200) * 1000 };
+  if (j.refresh_token) await setSetting(xKey('x_refresh_token'), j.refresh_token);
+  cached.set(currentAccount(), { token: j.access_token, exp: Date.now() + (j.expires_in ?? 7200) * 1000 });
   return j.access_token as string;
 }
 export const exchangeCode = (code: string, verifier: string) =>
   tokenCall({ grant_type: 'authorization_code', code, redirect_uri: xRedirectUri(), code_verifier: verifier });
 
-let cached: { token: string; exp: number } | null = null;
+const cached = new Map<string, { token: string; exp: number }>();
 export async function xAccessToken(): Promise<string> {
-  if (cached && cached.exp > Date.now() + 60e3) return cached.token;
-  const rt = await getSetting('x_refresh_token');
-  if (!rt) throw new Error('X not connected (open /api/x/auth)');
+  const c = cached.get(currentAccount());
+  if (c && c.exp > Date.now() + 60e3) return c.token;
+  const rt = await getSetting(xKey('x_refresh_token'));
+  if (!rt) throw new Error(`X not connected for account "${currentAccount()}" (open /api/x/auth?account=${currentAccount()})`);
   return tokenCall({ grant_type: 'refresh_token', refresh_token: rt });
 }
 
@@ -66,12 +71,16 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const CHUNK = 4 * 1024 * 1024;
 
 /** Upload a video from a public URL (Supabase Storage) with the v2 chunked media upload. Returns media id. */
-export async function uploadVideoFromUrl(videoUrl: string): Promise<string> {
+export const uploadVideoFromUrl = (videoUrl: string) => uploadMediaFromUrl(videoUrl, 'tweet_video', 'video/mp4');
+/** Upload an image (PNG/JPG chart, carousel cover) from a public URL. Returns media id. */
+export const uploadImageFromUrl = (imageUrl: string) => uploadMediaFromUrl(imageUrl, 'tweet_image', 'image/png');
+
+async function uploadMediaFromUrl(videoUrl: string, category: 'tweet_video' | 'tweet_image', fallbackType: string): Promise<string> {
   const src = await fetch(videoUrl);
   if (!src.ok) throw new Error(`fetch video: HTTP ${src.status}`);
   const buf = Buffer.from(await src.arrayBuffer());
-  const type = src.headers.get('content-type') || 'video/mp4';
-  const init = await x<any>('POST', 'media/upload/initialize', { media_type: type, total_bytes: buf.length, media_category: 'tweet_video' });
+  const type = src.headers.get('content-type') || fallbackType;
+  const init = await x<any>('POST', 'media/upload/initialize', { media_type: type, total_bytes: buf.length, media_category: category });
   const id: string = init?.data?.id;
   if (!id) throw new Error('X upload init: no media id');
   for (let i = 0, seg = 0; i < buf.length; i += CHUNK, seg++) {
