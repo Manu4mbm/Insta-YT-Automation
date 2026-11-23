@@ -40,3 +40,21 @@
 - Added admin ops: yt-reschedule, yt-channel now returns per-video stats.
 - Learnings: 30–40 s shorts get ~1.2k views; >70 s and "giant hand" style underperform. IG insights blocked (no insights permission) — likes only.
 - Project sources: /home/claude/work/{jaipur,asean,sixgen} (Remotion). sixgen = dark radar world-map template, reusable for defence topics.
+
+## 2026-11-23 — session handoff (India by Bharat)
+**Strategy (approved):** plan doc "IndiabyBharat — 90-Day Growth & Monetisation Plan" (claude.ai/artifact/LqVthcHxeJMLrYGVEyhRWx).
+- One upload/day, 13:30 IST, both platforms; Sunday long video (8–12 min) on YouTube.
+- Series: इतिहास का Twist (indigo/gold), भारत के योद्धा (crimson/bronze, two-part stories), Rajasthan; IG-only defence/nostalgia (text+music, no voice); This Is India = YouTube only.
+- Stop: politics/event coverage, meme trends, gimmicks, stock montages on IG, Alexander topics, reposts.
+- Workflow per piece, made the DAY BEFORE: script + cited facts → approval → ONE ElevenLabs take (Ajay YBBkra773die41zqs6qu, eleven_v4) → render → approval → schedule.
+- Style: "dynamic v2" (cuts every 1.5–3 s, moving camera, slam type, word-pop captions, grain, impact drums, no whoosh). Reference project: /home/claude/work/lachit (src/Reel.tsx). Skill proposed: dynamic-history-reel.
+
+**Posted/queued:**
+- 23 Nov 13:30 — itihas-twist-ep1-zero (IG + YT cjK2yk_3WxU) — live.
+- 24 Nov 13:30 — yoddha-ep1-lachit-part1 (v2) — queued IG + YT (not on X).
+
+**Next:**
+- 25 Nov: Lachit Part 2 — Saraighat 1671 (Lachit gravely ill, carried to war-boat, Mughals pushed back; Ram Singh retreats). Sources: kamrup.assam.gov.in, nvli.in, theprint.in excerpt, indianculture.gov.in. Script to owner by 16:00 IST 24 Nov.
+- Then per calendar in plan doc (26 Nov Constitution handwritten / IG BrahMos; 27–28 Kuldhara Pt 1–2; 29 long video #1).
+- Pending owner action: regenerate IG system-user token with instagram_manage_insights and put it in Vercel IG_ACCESS_TOKEN (insights still error #10).
+- Lesson: copy only fully-encoded mp4s to public/media and verify with ffprobe after deploy (truncated repost files on 19 Nov).
