@@ -17,6 +17,7 @@
 - 2026-11-14: GitHub Manu4mbm/insta-yt-automation (main) pushed; Vercel project insta-yt-automation linked, live at https://insta-yt-automation-smoky.vercel.app
 - 2026-11-14: Meta app 2167109920843634 (Unified login, SUAT config 1494606345938240); code supports IG_API_HOST=graph.facebook.com; /api/health all green for @indiabybharat (17841480386963690). Windows setup done on owner laptop.
 - 2026-11-16: Multi-account code live (main=@indiabybharat, protech, visionguider; extra accounts need IG_ACCESS_TOKEN_<SLUG>). YouTube connected: Google Cloud project indiabybharat-reels-automation (owner mankdixit@gmail.com, consent published), channel IndiabyBharat UCPpOUfozU2n9TKU3rFN6lRg authorised via indiabybharat@gmail.com. Uploads stay private until YouTube API audit.
+- 2026-11-23: X (Twitter) connected: app IndiaByBharat-AutoPost (console.x.com, pay-per-use credits), OAuth 2.0 as @indiabybharat; code lib/x.ts + api/x/[op] (auth|callback|cron); queue table `x_posts` (text ≤280, no links — link posts cost ~13x); pg_cron `post-due-x` every 10 min. Pending owner: add card in X Billing → Credits.
 - Next: webhook verify + comments field; add @protechsynergy & @visionguidersofficial (multi-account code); test post; brand placeholders; YouTube; App Review.
 - (old) Pending owner: Vercel secrets (CRON_SECRET, WEBHOOK_VERIFY_TOKEN, SUPABASE_SERVICE_ROLE_KEY, Meta vars), Vault `cron_secret`, brand placeholders.
 
