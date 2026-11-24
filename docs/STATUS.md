@@ -51,7 +51,9 @@
 
 **Posted/queued:**
 - 23 Nov 13:30 — itihas-twist-ep1-zero (IG + YT cjK2yk_3WxU) — live.
-- 24 Nov 13:30 — yoddha-ep1-lachit-part1 (v2) — queued IG + YT (not on X).
+- 24 Nov 13:30 — yoddha-ep1-lachit-part1 (v2) — IG + YT live; X at 15:00.
+- 25 Nov 13:30 — yoddha-ep1-lachit-part2 — IG + YT + X.
+- RULE: every India by Bharat reel goes to IG + YT + X (x_posts, account main, short Hindi text + hashtags).
 
 **Next:**
 - 25 Nov: Lachit Part 2 — Saraighat 1671 (Lachit gravely ill, carried to war-boat, Mughals pushed back; Ram Singh retreats). Sources: kamrup.assam.gov.in, nvli.in, theprint.in excerpt, indianculture.gov.in. Script to owner by 16:00 IST 24 Nov.
