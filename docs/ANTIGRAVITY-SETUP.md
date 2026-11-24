@@ -2,7 +2,15 @@
 
 Use this when Claude reaches its limit. Antigravity edits the same GitHub repo and renders reels on your own computer.
 
-## One-time setup (Windows / Mac)
+## One-time setup — DONE on Mr. Dixit's Windows PC (24 Nov 2026)
+Project folder: `C:\Users\Admin\Documents\insta-yt-automation`. Test still rendered OK.
+
+Windows notes (PowerShell blocks npm scripts): always type `npm.cmd` / `npx.cmd` instead of `npm` / `npx`.
+Rendering a full reel uses bash: run it from **Git Bash** (Start menu → Git Bash), e.g.
+`cd ~/Documents/insta-yt-automation/reel-engine && bash tools/render.sh specs/<slug>.json`.
+Python tools: `python tools/voice.py ...`, `python tools/cover.py ...`.
+
+## One-time setup (reference, for a new machine)
 1. Install: Google Antigravity, Git, Node.js 20 LTS, FFmpeg (add to PATH), Google Chrome, Python 3.
 2. In Antigravity: Clone Repository → sign in to GitHub → choose `insta-yt-automation`.
 3. Open a terminal in Antigravity:
