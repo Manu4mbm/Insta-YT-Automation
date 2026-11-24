@@ -60,3 +60,9 @@
 - Then per calendar in plan doc (26 Nov Constitution handwritten / IG BrahMos; 27–28 Kuldhara Pt 1–2; 29 long video #1).
 - Pending owner action: regenerate IG system-user token with instagram_manage_insights and put it in Vercel IG_ACCESS_TOKEN (insights still error #10).
 - Lesson: copy only fully-encoded mp4s to public/media and verify with ffprobe after deploy (truncated repost files on 19 Nov).
+
+## 2026-11-24 — reel engine (options A + B)
+- `reel-engine/`: reusable Remotion engine, 33 scene types, 5 themes, spec-driven (`specs/<slug>.json`). Tools: voice.py (tighten + word timings), music.py, render.sh, cover.py. Demo of every scene: `specs/_demo.json`.
+- From now on reels are made by writing a spec, not new code (target: about half the Claude usage per reel).
+- `AGENTS.md` (rules for any AI) and `docs/ANTIGRAVITY-SETUP.md` (backup builder on owner's PC) added.
+- Posted/queued: Lachit Part 1 live 24 Nov (IG/YT 13:30, X 15:00); Lachit Part 2 queued 25 Nov 13:30 IG+YT+X.

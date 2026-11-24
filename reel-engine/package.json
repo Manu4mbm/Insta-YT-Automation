@@ -1,0 +1,18 @@
+{
+  "name": "reel-engine",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "still": "remotion still src/index.ts Reel",
+    "render": "bash tools/render.sh"
+  },
+  "dependencies": {
+    "@remotion/bundler": "^4.0.538",
+    "@remotion/cli": "^4.0.538",
+    "@remotion/renderer": "^4.0.538",
+    "d3-geo": "^3.1.2",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "remotion": "^4.0.538"
+  }
+}
