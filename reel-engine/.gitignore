@@ -3,3 +3,7 @@ out/
 *.raw
 public/_cover.html
 voice/
+public/_coverbg.jpg
+public/*.wav
+s*.jpg
+specs/*.words.json
