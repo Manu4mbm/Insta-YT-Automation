@@ -38,7 +38,8 @@ const End: React.FC<{ t: number; spec: Spec; T: any }> = ({ t, spec, T }) => {
     </AbsoluteFill></>;
 };
 
-export const Reel: React.FC<{ spec: Spec }> = ({ spec }) => {
+export const Reel: React.FC<any> = (props) => {
+  const spec: Spec = props.slug ? props : props.spec;
   const f = useCurrentFrame(), t = f / 30, T = THEMES[spec.theme] ?? THEMES.yoddha;
   const imp = spec.impacts ?? spec.shots.filter((s) => s.impact).map((s) => s.a);
   const sh = shake(t, imp);

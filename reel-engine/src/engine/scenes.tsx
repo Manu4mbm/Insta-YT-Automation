@@ -206,4 +206,104 @@ export const SCENES: Record<string, React.FC<{ p: SceneP }>> = {
   /* MEDIA: a licensed / CC0 / own image from public/, Ken-Burns */
   image: ({ p }) => { const { lt, len, s } = p; return <><Sky top="#000" bot="#000" /><Cam lt={lt} len={len} kind={p.cam ?? "push"} amt={1.5}><Img src={staticFile(s.src)} style={{ position: "absolute", left: 0, top: s.top ?? 0, width: 1080, height: s.h ?? 1920, objectFit: "cover", filter: s.filter ?? "saturate(1.1) contrast(1.05)" }} /></Cam><Vignette k={0.7} />{s.credit && <div style={{ position: "absolute", bottom: 380, right: 40, fontFamily: LAT, fontWeight: 600, fontSize: 24, color: "#ffffffaa" }}>{s.credit}</div>}<Head p={p} /></>; },
 };
+
+/* ───────── rich "document & craft" scenes (added 25 Nov) ───────── */
+const Wood: React.FC = () => <AbsoluteFill style={{ background: "repeating-linear-gradient(92deg,#3a2414 0 18px,#4a2e1a 18px 26px,#2e1c10 26px 40px)", filter: "contrast(1.1)" }}><AbsoluteFill style={{ background: "radial-gradient(ellipse 70% 55% at 50% 45%, rgba(255,190,110,.35), rgba(0,0,0,.85) 80%)" }} /></AbsoluteFill>;
+const Nib: React.FC<{ x: number; y: number; rot?: number; s?: number }> = ({ x, y, rot = -35, s = 1 }) => (
+  <g transform={`translate(${x},${y}) rotate(${rot}) scale(${s})`}>
+    <rect x={-9} y={-330} width={18} height={250} rx={8} fill="#2a1a12" /><rect x={-11} y={-100} width={22} height={40} fill="#c9a24a" />
+    <path d="M-11 -60 L11 -60 L4 0 L0 8 L-4 0Z" fill="#d9c08a" stroke="#8a6a2a" strokeWidth={2} /><line x1={0} y1={-40} x2={0} y2={4} stroke="#5a4520" strokeWidth={2} />
+  </g>
+);
+const Parchment: React.FC<{ children?: React.ReactNode; style?: React.CSSProperties }> = ({ children, style }) => (
+  <div style={{ position: "absolute", background: "radial-gradient(ellipse at 40% 35%, #f6e7c3, #e2c995 70%, #c9a86a)", boxShadow: "0 40px 80px rgba(0,0,0,.7), inset 0 0 90px rgba(120,80,30,.45)", borderRadius: 6, ...style }}>{children}</div>
+);
+Object.assign(SCENES, {
+  /* page being hand-written: lines reveal under a moving nib */
+  calligraphy: ({ p }: { p: SceneP }) => {
+    const T = useTheme(); const { lt, len, s } = p; const lines: string[] = s.lines ?? ["हम, भारत के लोग,", "भारत को एक सम्पूर्ण", "प्रभुत्व-सम्पन्न", "लोकतंत्रात्मक गणराज्य", "बनाने के लिए…"];
+    const per = (len - 0.4) / lines.length; const cur = Math.min(lines.length - 1, Math.floor(lt / per)); const lp = clamp((lt - cur * per) / per);
+    const lineY = (i: number) => 560 + i * 120;
+    return <>
+      <Wood />
+      <Cam lt={lt} len={len} kind={p.cam ?? "push"} oy={lineY(cur)} amt={1.6}>
+        <Parchment style={{ left: 90, right: 90, top: 380, height: 1080, transform: "rotate(-2deg)" }}>
+          <div style={{ position: "absolute", inset: 30, border: `3px double ${T.gold}`, borderRadius: 4, opacity: 0.8 }} />
+          {lines.map((l, i) => <div key={i} style={{ position: "absolute", left: 80, right: 80, top: lineY(i) - 380 - 60, fontFamily: DEV, fontWeight: 800, fontSize: 64, color: "#1d140c", whiteSpace: "nowrap", clipPath: i < cur ? "none" : i === cur ? `inset(0 ${(1 - lp) * 100}% 0 0)` : "inset(0 100% 0 0)", textShadow: "0 0 1px rgba(20,10,0,.6)" }}>{l}</div>)}
+          {s.sign && <div style={{ position: "absolute", right: 80, bottom: 70, fontFamily: DEV, fontWeight: 800, fontSize: 44, color: "#7a1d12", opacity: clamp((lt - len + 1.2) / 0.4) }}>— {s.sign}</div>}
+        </Parchment>
+        <svg width="1080" height="1920" style={{ position: "absolute", inset: 0 }}><Nib x={170 + (cur < lines.length ? lp : 1) * 760} y={lineY(cur) + 20 + Math.sin(lt * 30) * 4} /></svg>
+      </Cam>
+      <Glow x={900} y={300} r={420} c1="rgba(255,200,120,.45)" c2="rgba(255,140,60,.12)" op={0.9} />
+      <Head p={p} />
+    </>;
+  },
+  /* a name written in gold across a page */
+  signature: ({ p }: { p: SceneP }) => {
+    const T = useTheme(); const { lt, len, s } = p; const q = clamp((lt - 0.3) / Math.max(0.8, len - 1));
+    return <><Wood /><Cam lt={lt} len={len} kind={p.cam ?? "pull"}>
+      <Parchment style={{ left: 60, right: 60, top: 560, height: 700, transform: "rotate(1.5deg)" }}>
+        {[0, 1, 2, 3].map((k) => <div key={k} style={{ position: "absolute", left: 70, right: 70, top: 80 + k * 70, height: 16, borderRadius: 8, background: "rgba(40,25,10,.18)" }} />)}
+        <div style={{ position: "absolute", left: 0, right: 0, top: 380, textAlign: "center", fontFamily: DEV, fontWeight: 800, fontSize: s.size ?? 92, color: T.gold, textShadow: "0 2px 0 #7a5a18, 0 0 24px rgba(242,193,78,.6)", clipPath: `inset(0 ${(1 - q) * 100}% 0 0)` }}>{s.text}</div>
+        {s.sub && <div style={{ position: "absolute", left: 0, right: 0, top: 540, textAlign: "center", fontFamily: DEV, fontWeight: 800, fontSize: 46, color: "#5a1d12", opacity: clamp((lt - len + 0.9) / 0.4) }}>{s.sub}</div>}
+      </Parchment></Cam>
+      <Embers t={p.t} n={30} color="#ffe3a0" /><Head p={p} /></>;
+  },
+  /* desk of many nibs + inkpot, number counter */
+  nibs: ({ p }: { p: SceneP }) => {
+    const T = useTheme(); const { lt, len, s } = p; const n = Math.round((s.count ?? 60) * eo(clamp(lt / (len * 0.8))));
+    return <><Wood /><Cam lt={lt} len={len} kind={p.cam ?? "dutch"}>
+      <svg width="1080" height="1920" style={{ position: "absolute", inset: 0 }}>
+        <ellipse cx={540} cy={1180} rx={140} ry={40} fill="#0a0604" opacity={0.6} /><path d="M420 1180 L420 1060 Q540 1000 660 1060 L660 1180Z" fill="#111a2e" /><ellipse cx={540} cy={1060} rx={120} ry={34} fill="#0b1020" /><ellipse cx={520} cy={1048} rx={50} ry={10} fill="#3a5a9a" opacity={0.5} />
+        {Array.from({ length: Math.min(70, Math.round(n / (s.count ?? 60) * 70)) }, (_, i) => <Nib key={i} x={540 + Math.cos(i * 2.4) * (200 + (i % 7) * 45)} y={1180 + Math.sin(i * 2.4) * (110 + (i % 5) * 35)} rot={(i * 47) % 360} s={0.6} />)}
+      </svg></Cam>
+      <div style={{ position: "absolute", top: 560, width: "100%", textAlign: "center", fontFamily: LAT, fontWeight: 800, fontSize: 230, color: T.gold, textShadow: "0 10px 40px #000" }}>{s.prefix ?? ""}{n}{s.suffix ?? ""}</div>
+      {s.label && <Slam lt={lt} delay={0.3} text={s.label} size={68} top={830} />}
+      <Head p={p} /></>;
+  },
+  /* grand hall with arches and chandelier, dolly forward */
+  hall: ({ p }: { p: SceneP }) => {
+    const T = useTheme(); const { lt, len, s } = p; const z = 1 + 0.35 * eo(clamp(lt / len));
+    return <><Sky top="#2a1408" bot="#0a0503" />
+      <AbsoluteFill style={{ transformOrigin: "540px 900px", transform: `scale(${z})` }}>
+        <svg width="1080" height="1920" style={{ position: "absolute", inset: 0 }}>
+          <defs><linearGradient id="hl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#ffcf8a" stopOpacity=".55" /><stop offset="1" stopColor="#ffcf8a" stopOpacity="0" /></linearGradient></defs>
+          {[0, 1, 2, 3, 4].map((k) => { const w = 980 - k * 170, h = 1300 - k * 230, x = 540 - w / 2, y = 1500 - h; return <path key={k} d={`M${x} 1500 L${x} ${y + w / 2} A${w / 2} ${w / 2} 0 0 1 ${x + w} ${y + w / 2} L${x + w} 1500`} fill="none" stroke={`rgba(240,190,120,${0.55 - k * 0.08})`} strokeWidth={22 - k * 3} />; })}
+          <path d="M0 1500 L1080 1500 L1080 1920 L0 1920Z" fill="#1a0d06" />
+          {Array.from({ length: 9 }, (_, i) => <line key={i} x1={540} y1={1500} x2={-400 + i * 235} y2={1920} stroke="#3a2010" strokeWidth={4} />)}
+          <path d="M540 200 L540 420" stroke={T.gold} strokeWidth={4} />
+          {Array.from({ length: 11 }, (_, i) => <circle key={i} cx={540 + Math.cos((i / 11) * Math.PI * 2) * 120} cy={460 + Math.sin((i / 11) * Math.PI * 2) * 30} r={10} fill="#ffe2a0" opacity={0.7 + 0.3 * Math.sin(p.t * 6 + i)} />)}
+          <ellipse cx={540} cy={460} rx={140} ry={40} fill="none" stroke={T.gold} strokeWidth={4} />
+          <path d="M340 480 L740 480 L960 1500 L120 1500Z" fill="url(#hl)" />
+          {[220, 860].map((x) => <rect key={x} x={x - 40} y={700} width={80} height={800} fill="#2a160a" stroke="#5a3418" strokeWidth={4} />)}
+        </svg>
+      </AbsoluteFill>
+      <Embers t={p.t} n={30} color="#ffe3a0" />
+      {s.label && <Chip lt={lt} text={s.label} top={1240} delay={0.4} />}
+      <Head p={p} /></>;
+  },
+  /* illuminated bound manuscript opening (3D page turn) */
+  book: ({ p }: { p: SceneP }) => {
+    const T = useTheme(); const { lt, len, s } = p; const turn = eio(clamp((lt - 0.3) / 1.2));
+    return <><Sky top="#1d1a52" bot="#05040f" /><Rays t={p.t} cy={950} n={18} op={0.09} />
+      <Cam lt={lt} len={len} kind={p.cam ?? "push"} oy={950}>
+        <div style={{ position: "absolute", left: 140, top: 520, width: 800, height: 900, perspective: 2200 }}>
+          <div style={{ position: "absolute", left: 400, width: 400, height: 900, background: "linear-gradient(90deg,#d8bd85,#f3e3bd)", boxShadow: "0 30px 60px rgba(0,0,0,.6)", borderRadius: "0 8px 8px 0" }}>
+            <div style={{ position: "absolute", inset: 30, border: `6px double ${T.gold}` }} />
+            {Array.from({ length: 9 }, (_, k) => <div key={k} style={{ position: "absolute", left: 60, right: 60, top: 140 + k * 70, height: 12, borderRadius: 6, background: "rgba(40,25,10,.25)" }} />)}
+          </div>
+          <div style={{ position: "absolute", left: 0, width: 400, height: 900, background: "linear-gradient(270deg,#d8bd85,#f3e3bd)", borderRadius: "8px 0 0 8px", boxShadow: "0 30px 60px rgba(0,0,0,.6)" }}>
+            <div style={{ position: "absolute", inset: 30, border: `6px double ${T.gold}` }} />
+            {Array.from({ length: 9 }, (_, k) => <div key={k} style={{ position: "absolute", left: 60, right: 60, top: 140 + k * 70, height: 12, borderRadius: 6, background: "rgba(40,25,10,.25)" }} />)}
+          </div>
+          <div style={{ position: "absolute", left: 400, width: 400, height: 900, transformOrigin: "0 50%", transform: `rotateY(${-178 * turn}deg)`, transformStyle: "preserve-3d", background: "linear-gradient(135deg,#5a1414,#2a0606)", border: `8px solid ${T.gold}`, borderRadius: "0 10px 10px 0", boxShadow: "0 30px 60px rgba(0,0,0,.7)", backfaceVisibility: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ textAlign: "center", fontFamily: DEV, fontWeight: 800, color: T.gold }}><div style={{ fontSize: 70, lineHeight: 1.3 }}>{s.cover ?? "भारत का\nसंविधान"}</div><div style={{ margin: "30px auto 0", width: 120, height: 120, borderRadius: 60, border: `5px solid ${T.gold}` }} /></div>
+          </div>
+        </div>
+      </Cam>
+      <Embers t={p.t} n={40} color="#ffe3a0" />{s.text && <Slam lt={lt} delay={s.textAt ?? 1.2} text={s.text} size={s.size ?? 96} top={1430} color={T.gold} sub={s.sub} />}
+      <Head p={p} /></>;
+  },
+});
+
 export const SCENE_TYPES = Object.keys(SCENES);
