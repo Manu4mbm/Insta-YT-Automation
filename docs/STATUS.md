@@ -66,3 +66,8 @@
 - From now on reels are made by writing a spec, not new code (target: about half the Claude usage per reel).
 - `AGENTS.md` (rules for any AI) and `docs/ANTIGRAVITY-SETUP.md` (backup builder on owner's PC) added.
 - Posted/queued: Lachit Part 1 live 24 Nov (IG/YT 13:30, X 15:00); Lachit Part 2 queued 25 Nov 13:30 IG+YT+X.
+
+## 2026-11-26 handoff
+- Kuldhara Part 1 (`rajasthan-kuldhara-part1`, 38.4 s) rendered and queued for IG, YT and X on 27 Nov 08:00 UTC (13:30 IST). Media verified live.
+- New engine scenes: `village` (mode day|night|out|ruins, build), `caravan`, `stepwell` (from/to water level), `curse`. Cover tool: `cleanShot`/`cleanAt` renders a text-free background.
+- Next: Kuldhara Part 2 (28 Nov), evidence: wells dry by 1815, earthquake study (Roy et al., Current Science), Salim Singh taxes. Script needs approval first.
