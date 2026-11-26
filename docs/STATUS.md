@@ -71,3 +71,9 @@
 - Kuldhara Part 1 (`rajasthan-kuldhara-part1`, 38.4 s) rendered and queued for IG, YT and X on 27 Nov 08:00 UTC (13:30 IST). Media verified live.
 - New engine scenes: `village` (mode day|night|out|ruins, build), `caravan`, `stepwell` (from/to water level), `curse`. Cover tool: `cleanShot`/`cleanAt` renders a text-free background.
 - Next: Kuldhara Part 2 (28 Nov), evidence: wells dry by 1815, earthquake study (Roy et al., Current Science), Salim Singh taxes. Script needs approval first.
+
+## 2026-11-26 — aiwithdevansh (separate pipeline)
+- Account setup done: Supabase settings row, Vercel token env, Meta tester role. Webhook OFF on purpose. Details: `aiwithdevansh-engine/STATUS.md`.
+- Its own engine lives in `aiwithdevansh-engine/` (theme, scenes, voice, docs). India by Bharat's `reel-engine/` is not used for it.
+- Gemini Skills reel (v4) approved. Uploaded 26 Nov to `reels/aiwithdevansh/gemini-skills-devansh.mp4` + `-cover.jpg` (verified). Queued 26 Nov: posts id 17a0206c-8aed-4cee-945a-24b4a3e44597, 27 Nov 13:30 IST, keyword SKILL. Owner decision: DMs via ReplyKaro only, NO built-in dm_rules for aiwithdevansh (no global/SKILL rules exist, checked). Guide written: public/guides/gemini-skills.html (not deployed yet). Note: built-in gate text defaults to IG_HANDLE (@indiabybharat); set `gate_text` with @aiwithdevansh in its dm_rules row.
+- Cloud upload method (owner approved 26 Nov): pg_net call to /api/admin/upload-url using Vault `cron_secret` inside SQL, then curl PUT to the signed URL. Details: aiwithdevansh-engine/docs/PIPELINE.md step 10.
