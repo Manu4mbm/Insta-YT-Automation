@@ -8,7 +8,17 @@ TH = {"yoddha": ("#6a1a12", "#120406", "#f0b75e", "#ff6a3d"), "twist": ("#1d1a52
       "rajasthan": ("#7a2a45", "#1a0a10", "#f6c36b", "#ff5c8a"), "defence": ("#0f2a2e", "#050b0d", "#7dffb0", "#3fd0ff"), "travel": ("#0d3b4a", "#06141c", "#ffd166", "#ff7b54")}
 c1, c2, gold, acc = TH.get(spec.get("theme"), TH["yoddha"])
 bgimg = ""
-if c.get("frameAt") is not None and os.path.exists(f"out/{slug}.mp4"):
+GRAD = '<div style="position:absolute;inset:0;background:url(_coverbg.jpg) center/cover"></div><div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.82) 0%,rgba(0,0,0,.25) 45%,rgba(0,0,0,.25) 70%,rgba(0,0,0,.85) 100%)"></div>'
+if c.get("cleanShot") is not None:
+    # render one shot with no captions, headline, stamp, chip or series pill -> clean background
+    sh = dict(spec["shots"][c["cleanShot"]]); L = sh["b"] - sh["a"]
+    for k in ("head", "stamp", "chip", "label", "impact"): sh.pop(k, None)
+    sh["a"], sh["b"] = 0, 4
+    tmp = dict(spec, captions=[], shots=[sh], voiceEnd=4, endCard=0, series="", badge="", clean=True)
+    json.dump(tmp, open("out/_cleancover.json", "w"), ensure_ascii=False)
+    subprocess.run(["npx", "remotion", "still", "src/index.ts", "Reel", "public/_coverbg.jpg", "--props=out/_cleancover.json", f"--frame={int(c.get('cleanAt', 1.5) * 30)}", "--log=error"], check=True)
+    bgimg = GRAD
+elif c.get("frameAt") is not None and os.path.exists(f"out/{slug}.mp4"):
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", str(c["frameAt"]), "-i", f"out/{slug}.mp4", "-frames:v", "1", "public/_coverbg.jpg"])
     bgimg = '<div style="position:absolute;inset:0;background:url(_coverbg.jpg) center/cover"></div><div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.82) 0%,rgba(0,0,0,.25) 45%,rgba(0,0,0,.25) 70%,rgba(0,0,0,.85) 100%)"></div>'
 rich = lambda s: re.sub(r"_([^_]+)_", rf'<span style="color:{acc}">\1</span>', re.sub(r"\*([^*]+)\*", rf'<span style="color:{gold}">\1</span>', s)).replace("\n", "<br>")

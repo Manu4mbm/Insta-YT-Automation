@@ -306,4 +306,98 @@ Object.assign(SCENES, {
   },
 });
 
+/* ---------- desert village scenes (Kuldhara etc.) ---------- */
+const Dunes: React.FC<{ y?: number; c1?: string; c2?: string }> = ({ y = 1280, c1 = "#7a4220", c2 = "#4a2410" }) => <svg width="1080" height="1920" style={{ position: "absolute", inset: 0 }}>
+  <path d={`M0 ${y} Q270 ${y - 90} 540 ${y - 20} T1080 ${y - 40} L1080 1920 L0 1920Z`} fill={c1} />
+  <path d={`M0 ${y + 140} Q320 ${y + 40} 640 ${y + 130} T1080 ${y + 90} L1080 1920 L0 1920Z`} fill={c2} /></svg>;
+/* one sandstone house: roofless = ruin, lit = window glow */
+const House: React.FC<{ x: number; y: number; w: number; h: number; ruin?: number; lit?: number; c?: string }> = ({ x, y, w, h, ruin = 0, lit = 0, c = "#c98a4b" }) => {
+  const cut = ruin * h * 0.35;
+  return <g>
+    <path d={`M${x} ${y} L${x} ${y - h + cut * 0.4} L${x + w * 0.35} ${y - h + cut} L${x + w * 0.7} ${y - h + cut * 0.2} L${x + w} ${y - h + cut * 0.7} L${x + w} ${y}Z`} fill={c} stroke="#00000055" strokeWidth={3} />
+    {ruin < 0.5 && <rect x={x - 8} y={y - h - 14} width={w + 16} height={16} fill="#8a5428" />}
+    <rect x={x + w * 0.38} y={y - h * 0.45} width={w * 0.24} height={h * 0.45} rx={w * 0.12} fill={lit > 0 ? `rgba(255,190,90,${lit})` : "#2a140a"} />
+    <rect x={x + w * 0.12} y={y - h * 0.8} width={w * 0.16} height={h * 0.16} fill={lit > 0 ? `rgba(255,200,110,${lit * 0.9})` : "#2a140a"} />
+    <rect x={x + w * 0.72} y={y - h * 0.8} width={w * 0.16} height={h * 0.16} fill={lit > 0 ? `rgba(255,200,110,${lit * 0.9})` : "#2a140a"} />
+  </g>;
+};
+const ROW = [[30, 1290, 170, 190], [210, 1300, 150, 240], [370, 1285, 190, 200], [570, 1300, 160, 260], [740, 1290, 170, 210], [920, 1300, 150, 230], [-60, 1440, 210, 250], [160, 1450, 230, 220], [400, 1440, 200, 280], [610, 1450, 230, 240], [850, 1445, 230, 260]];
+export const VILLAGE_SCENES: Record<string, React.FC<{ p: SceneP }>> = {
+  /* village of sandstone houses. mode: day | night | out (lights go off one by one) | ruins */
+  village: ({ p }) => {
+    const T = useTheme(); const { lt, t, len, s } = p; const mode = s.mode ?? "day";
+    const night = mode !== "day" && mode !== "ruins";
+    const build = s.build ? clamp(lt / Math.max(0.8, len * 0.7)) : 1;
+    return <>
+      {night ? <><Sky top="#0b0a2a" bot="#1a0d20" /><Stars t={t} /></> : mode === "ruins" ? <Sky top="#f0a060" bot="#7a3a1a" /> : <Sky top="#ffb36b" bot="#d9733a" />}
+      <Glow x={mode === "ruins" ? 300 : 820} y={night ? 560 : 620} r={night ? 90 : 160} c1={night ? "#f5e6c4" : "#fff0c0"} c2={night ? "#f5e6c4" : "#ffb060"} op={1} />
+      <Cam lt={lt} len={len} kind={p.cam ?? "panR"} oy={1250} amt={1.3}>
+        <Dunes y={1250} c1={night ? "#2a1626" : "#a8602c"} c2={night ? "#180c18" : "#7a4220"} />
+        <svg width="1080" height="1920" style={{ position: "absolute", inset: 0 }}>
+          {ROW.map(([x, y, w, h], i) => {
+            const shown = clamp(build * ROW.length - i); if (shown <= 0) return null;
+            const off = mode === "out" ? clamp((lt - 0.3 - ((i * 7) % ROW.length) * (len - 0.8) / ROW.length) / 0.15) : 0;
+            const lit = night ? (1 - off) * (0.75 + 0.25 * Math.sin(t * 9 + i)) : 0;
+            return <g key={i} transform={`translate(0 ${(1 - eo(shown)) * 60})`} opacity={shown}><House x={x} y={y} w={w} h={h} ruin={mode === "ruins" ? 0.6 + (i % 3) * 0.2 : 0} lit={lit} c={night ? "#4a2a2a" : "#c98a4b"} /></g>;
+          })}
+        </svg>
+      </Cam>
+      {mode === "ruins" && <Embers t={t} n={25} color="#ffd9a0" />}
+      {s.label && <Chip lt={lt} text={s.label} top={s.labelTop ?? 1620} delay={0.3} />}
+      <Head p={p} />
+    </>;
+  },
+  /* night caravan: people + camels with lanterns walking off over dunes */
+  caravan: ({ p }) => {
+    const T = useTheme(); const { lt, t, len, s } = p; const n = s.n ?? 14; const q = lt / len;
+    return <>
+      <Sky top="#0b0a2a" bot="#2a1430" /><Stars t={t} />
+      <svg width="1080" height="1920" style={{ position: "absolute", inset: 0 }}><circle cx={250} cy={600} r={70} fill="#f5e6c4" /></svg>
+      <Cam lt={lt} len={len} kind={p.cam ?? "still"}>
+        <Dunes y={1180} c1="#2a1626" c2="#140a14" />
+        <svg width="1080" height="1920" style={{ position: "absolute", inset: 0 }}>
+          {Array.from({ length: n }, (_, i) => {
+            const x = 1200 - ((q * 900 + i * 95) % 1500), y = 1170 + Math.sin(x / 260) * 30 - (i % 2) * 8, bob = Math.sin(t * 6 + i) * 4;
+            const camel = i % 4 === 0;
+            return <g key={i} transform={`translate(${x} ${y + bob}) scale(1.7)`}>
+              {camel ? <path d="M-60 0 L-50 -60 Q-30 -100 0 -70 Q20 -110 40 -70 L60 -90 L75 -95 L70 -70 L55 -55 L50 0 L40 0 L35 -40 L-35 -40 L-40 0Z" fill="#06030a" />
+                : <><circle cx={0} cy={-78} r={11} fill="#06030a" /><path d="M-12 -66 L12 -66 L16 -20 L8 0 L2 0 L0 -18 L-2 0 L-8 0 L-16 -20Z" fill="#06030a" /><path d="M-14 -60 L-30 -40" stroke="#06030a" strokeWidth={6} />
+                  {i % 3 === 1 && <><line x1={16} y1={-58} x2={30} y2={-44} stroke="#06030a" strokeWidth={4} /><circle cx={30} cy={-38} r={7 + Math.sin(t * 20 + i)} fill="#ffc46a" /><circle cx={30} cy={-38} r={26} fill="#ffb04a" opacity={0.25} /></>}</>}
+            </g>;
+          })}
+        </svg>
+      </Cam>
+      <Head p={p} />
+    </>;
+  },
+  /* stepwell cross-section; water level falls from `from` to `to` (0..1) */
+  stepwell: ({ p }) => {
+    const T = useTheme(); const { lt, len, s } = p; const lv = (s.from ?? 0.8) + ((s.to ?? 0.8) - (s.from ?? 0.8)) * eio(clamp((lt - 0.3) / Math.max(0.8, len - 0.6)));
+    const top = 620, bot = 1500, wy = bot - (bot - top) * lv;
+    return <><Sky top="#ffb36b" bot="#a8602c" />
+      <Cam lt={lt} len={len} kind={p.cam ?? "push"} oy={1100}>
+        <svg width="1080" height="1920" style={{ position: "absolute", inset: 0 }}>
+          <rect x={0} y={top - 40} width={1080} height={1400} fill="#7a4220" />
+          <path d={`M90 ${top} ${Array.from({ length: 8 }, (_, k) => `L${90 + k * 50} ${top + k * 110} L${90 + (k + 1) * 50} ${top + k * 110}`).join(" ")} L490 ${bot} L590 ${bot} ${Array.from({ length: 8 }, (_, k) => `L${590 + k * 50} ${bot - k * 110} L${590 + (k + 1) * 50} ${bot - k * 110}`).join(" ")} L990 ${top}Z`} fill="#c98a4b" stroke="#5a3010" strokeWidth={4} />
+          <path d={`M${90 + ((wy - top) / 110) * 50} ${wy} L${990 - ((wy - top) / 110) * 50} ${wy} L590 ${bot} L490 ${bot}Z`} fill={T.water} opacity={0.85} />
+          <line x1={60} y1={wy} x2={1020} y2={wy} stroke="#fff" strokeWidth={3} strokeDasharray="12 10" opacity={0.7} />
+        </svg>
+      </Cam>
+      {s.label && <Chip lt={lt} text={s.label} top={1620} delay={0.3} />}
+      <Head p={p} /></>;
+  },
+  /* curse: red word burns in over dark ruins */
+  curse: ({ p }) => {
+    const T = useTheme(); const { lt, t, len, s } = p; const f = 0.6 + 0.4 * Math.sin(t * 17) * Math.sin(t * 5);
+    return <><Sky top="#1a0204" bot="#000" /><Flames t={t} /><Embers t={t} n={70} />
+      <Cam lt={lt} len={len} kind={p.cam ?? "push"}>
+        <Slam lt={lt} text={s.text ?? "श्राप"} size={s.size ?? 260} top={640} color={T.red} style="blur" />
+        {s.sub && <Slam lt={lt} delay={0.8} text={s.sub} size={66} top={1000} />}
+      </Cam>
+      <AbsoluteFill style={{ background: `radial-gradient(circle at 50% 45%, rgba(216,49,42,${0.25 * f}), transparent 60%)` }} />
+      <Head p={p} /></>;
+  },
+};
+Object.assign(SCENES, VILLAGE_SCENES);
+
 export const SCENE_TYPES = Object.keys(SCENES);

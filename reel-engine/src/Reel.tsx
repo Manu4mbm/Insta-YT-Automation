@@ -60,9 +60,9 @@ export const Reel: React.FC<any> = (props) => {
       <AbsoluteFill style={{ background: "#fff", opacity: flashA(t, imp), pointerEvents: "none" }} />
       <Vignette /><Grain f={f} />
       <div style={{ position: "absolute", top: 0, left: 0, height: 10, width: `${(t / dur) * 100}%`, background: `linear-gradient(90deg, ${T.accent}, ${T.gold})` }} />
-      <div style={{ position: "absolute", top: 110, width: "100%", textAlign: "center" }}>
+      {!spec.clean && <div style={{ position: "absolute", top: 110, width: "100%", textAlign: "center" }}>
         <span style={{ display: "inline-block", border: `3px solid ${T.gold}`, borderRadius: 40, padding: "8px 30px", fontFamily: DEV, fontWeight: 800, fontSize: 38, color: T.gold, background: "rgba(0,0,0,.55)" }}>{spec.series}{spec.badge && <span style={{ fontFamily: LAT, fontSize: 30 }}> · {spec.badge}</span>}</span>
-      </div>
+      </div>}
       <Caption t={t} spec={spec} T={T} />
       {spec.voice && <Audio src={staticFile(spec.voice)} />}
     </AbsoluteFill>
