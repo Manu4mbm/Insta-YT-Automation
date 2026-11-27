@@ -12,7 +12,7 @@ GRAD = '<div style="position:absolute;inset:0;background:url(_coverbg.jpg) cente
 if c.get("cleanShot") is not None:
     # render one shot with no captions, headline, stamp, chip or series pill -> clean background
     sh = dict(spec["shots"][c["cleanShot"]]); L = sh["b"] - sh["a"]
-    for k in ("head", "stamp", "chip", "label", "impact"): sh.pop(k, None)
+    for k in ("head", "stamp", "chip", "label", "impact", "tag"): sh.pop(k, None)
     sh["a"], sh["b"] = 0, 4
     tmp = dict(spec, captions=[], shots=[sh], voiceEnd=4, endCard=0, series="", badge="", clean=True)
     json.dump(tmp, open("out/_cleancover.json", "w"), ensure_ascii=False)

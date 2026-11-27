@@ -1,3 +1,4 @@
+import { DOSSIER } from "./dossier";
 import React from "react";
 import { AbsoluteFill, Img, staticFile } from "remotion";
 import { geoMercator, geoPath, geoInterpolate } from "d3-geo";
@@ -420,6 +421,6 @@ export const VILLAGE_SCENES: Record<string, React.FC<{ p: SceneP }>> = {
       <Head p={p} /></>;
   },
 };
-Object.assign(SCENES, VILLAGE_SCENES);
+Object.assign(SCENES, VILLAGE_SCENES, DOSSIER);
 
 export const SCENE_TYPES = Object.keys(SCENES);

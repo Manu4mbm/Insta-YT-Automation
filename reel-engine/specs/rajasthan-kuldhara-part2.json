@@ -101,50 +101,143 @@
  ],
  "shots": [
   {
-   "type": "village",
-   "mode": "out",
-   "head": "एक रात में ख़ाली?",
-   "headSize": 96,
-   "stamp": {
-    "text": "PART 2",
-    "at": 0.6,
-    "top": 520,
-    "size": 90
-   },
-   "cam": "push",
+   "type": "board",
+   "items": [
+    {
+     "kind": "well",
+     "label": "पानी",
+     "x": 290,
+     "y": 640,
+     "rot": -6,
+     "w": 380
+    },
+    {
+     "kind": "coin",
+     "label": "कर",
+     "x": 790,
+     "y": 690,
+     "rot": 5,
+     "w": 380
+    },
+    {
+     "kind": "crack",
+     "label": "ज़मीन",
+     "x": 310,
+     "y": 1150,
+     "rot": 4,
+     "w": 380
+    },
+    {
+     "kind": "curse",
+     "label": "श्राप?",
+     "x": 780,
+     "y": 1190,
+     "rot": -4,
+     "w": 380
+    }
+   ],
+   "links": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     3
+    ],
+    [
+     0,
+     2
+    ],
+    [
+     2,
+     3
+    ]
+   ],
+   "tag": "CASE: कुलधरा",
    "a": 0,
    "b": 2.52
   },
   {
-   "type": "slam",
+   "type": "casefile",
+   "cover": "TOP SECRET",
+   "coverSub": "KULDHARA · 1815–1890",
+   "tab": "EVIDENCE",
+   "title": "सबूत",
    "lines": [
-    "आज:",
-    "*सबूत*"
+    "1. पानी",
+    "2. कर",
+    "3. ज़मीन"
    ],
-   "stagger": 0.5,
-   "bg": "rays",
-   "impact": true,
+   "stamp": "खुला",
+   "stampAt": 1.0,
    "a": 2.52,
    "b": 3.88
   },
   {
-   "type": "slam",
-   "lines": [
-    "सबूत 1",
-    "_पानी_"
+   "type": "board",
+   "items": [
+    {
+     "kind": "well",
+     "label": "पानी",
+     "x": 290,
+     "y": 640,
+     "rot": -6,
+     "w": 380
+    },
+    {
+     "kind": "coin",
+     "label": "कर",
+     "x": 790,
+     "y": 690,
+     "rot": 5,
+     "w": 380
+    },
+    {
+     "kind": "crack",
+     "label": "ज़मीन",
+     "x": 310,
+     "y": 1150,
+     "rot": 4,
+     "w": 380
+    },
+    {
+     "kind": "curse",
+     "label": "श्राप?",
+     "x": 780,
+     "y": 1190,
+     "rot": -4,
+     "w": 380
+    }
    ],
-   "stagger": 0.5,
-   "bg": "water",
-   "impact": true,
+   "links": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     3
+    ],
+    [
+     0,
+     2
+    ],
+    [
+     2,
+     3
+    ]
+   ],
+   "focus": 0,
+   "tag": "सबूत #1 · पानी",
    "a": 3.88,
    "b": 5.38
   },
   {
-   "type": "stepwell",
-   "from": 0.85,
-   "to": 0.7,
-   "head": "काकनी नदी — मौसमी",
-   "headSize": 88,
+   "type": "polaroid",
+   "kind": "river",
+   "label": "काकनी नदी",
+   "note": "मौसमी नदी… सूखती रही",
    "a": 5.38,
    "b": 6.86
   },
@@ -169,24 +262,76 @@
    "b": 11.44
   },
   {
-   "type": "stepwell",
-   "from": 0.22,
-   "to": 0.08,
-   "head": "1850",
-   "headSize": 150,
-   "label": "बस बावड़ी + 2 गहरे कुएँ",
+   "type": "casefile",
+   "cover": "RECORD",
+   "coverSub": "1850",
+   "tab": "1850",
+   "title": "1850 तक बचे:",
+   "lines": [
+    "✓ बावड़ी",
+    "✓ 2 गहरे कुएँ",
+    "✗ बाक़ी सब सूखे"
+   ],
+   "hi": 2,
    "a": 11.44,
    "b": 14.68
   },
   {
-   "type": "slam",
-   "lines": [
-    "सबूत 2",
-    "*कर*"
+   "type": "board",
+   "items": [
+    {
+     "kind": "well",
+     "label": "पानी",
+     "x": 290,
+     "y": 640,
+     "rot": -6,
+     "w": 380
+    },
+    {
+     "kind": "coin",
+     "label": "कर",
+     "x": 790,
+     "y": 690,
+     "rot": 5,
+     "w": 380
+    },
+    {
+     "kind": "crack",
+     "label": "ज़मीन",
+     "x": 310,
+     "y": 1150,
+     "rot": 4,
+     "w": 380
+    },
+    {
+     "kind": "curse",
+     "label": "श्राप?",
+     "x": 780,
+     "y": 1190,
+     "rot": -4,
+     "w": 380
+    }
    ],
-   "stagger": 0.5,
-   "bg": "rays",
-   "impact": true,
+   "links": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     3
+    ],
+    [
+     0,
+     2
+    ],
+    [
+     2,
+     3
+    ]
+   ],
+   "focus": 1,
+   "tag": "सबूत #2 · कर",
    "a": 14.68,
    "b": 16.26
   },
@@ -199,29 +344,70 @@
    "b": 18.66
   },
   {
-   "type": "slam",
-   "lines": [
-    "सबूत 3",
-    "~ज़मीन~"
+   "type": "board",
+   "items": [
+    {
+     "kind": "well",
+     "label": "पानी",
+     "x": 290,
+     "y": 640,
+     "rot": -6,
+     "w": 380
+    },
+    {
+     "kind": "coin",
+     "label": "कर",
+     "x": 790,
+     "y": 690,
+     "rot": 5,
+     "w": 380
+    },
+    {
+     "kind": "crack",
+     "label": "ज़मीन",
+     "x": 310,
+     "y": 1150,
+     "rot": 4,
+     "w": 380
+    },
+    {
+     "kind": "curse",
+     "label": "श्राप?",
+     "x": 780,
+     "y": 1190,
+     "rot": -4,
+     "w": 380
+    }
    ],
-   "stagger": 0.5,
-   "bg": "blood",
-   "impact": true,
+   "links": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     3
+    ],
+    [
+     0,
+     2
+    ],
+    [
+     2,
+     3
+    ]
+   ],
+   "focus": 2,
+   "tag": "सबूत #3 · ज़मीन",
    "a": 18.66,
    "b": 20.2
   },
   {
-   "type": "title",
-   "text": "CURRENT SCIENCE",
-   "size": 100,
-   "sub": "2017 · शोध अध्ययन",
-   "stamp": {
-    "text": "Roy et al.",
-    "at": 1.0,
-    "top": 1150,
-    "size": 70,
-    "color": "#f6c36b"
-   },
+   "type": "newspaper",
+   "mast": "CURRENT SCIENCE",
+   "date": "2017 · Roy et al.",
+   "head": "कुलधरा: भूकंप ने उजाड़ा?",
+   "pic": "crack",
    "a": 20.2,
    "b": 23.08
   },
@@ -235,25 +421,18 @@
    "b": 25.88
   },
   {
-   "type": "slam",
-   "lines": [
-    "निष्कर्ष:",
-    "~भूकंप~"
-   ],
-   "stagger": 0.5,
-   "bg": "blood",
-   "impact": true,
+   "type": "polaroid",
+   "kind": "crack",
+   "label": "निष्कर्ष: भूकंप",
+   "note": "गिरी छतें · टूटे खंभे",
    "a": 25.88,
    "b": 27.44
   },
   {
-   "type": "slam",
-   "lines": [
-    "सबसे बड़ा सबूत:",
-    "*गिनती*"
-   ],
-   "stagger": 0.6,
-   "bg": "rays",
+   "type": "polaroid",
+   "kind": "people",
+   "label": "गिनती",
+   "note": "सबसे बड़ा सबूत",
    "a": 27.44,
    "b": 29.74
   },
@@ -287,13 +466,62 @@
    "b": 36.62
   },
   {
-   "type": "slam",
-   "lines": [
-    "श्राप नहीं —",
-    "*सूखा · कर · ज़मीन*"
+   "type": "board",
+   "items": [
+    {
+     "kind": "well",
+     "label": "पानी",
+     "x": 290,
+     "y": 640,
+     "rot": -6,
+     "w": 380
+    },
+    {
+     "kind": "coin",
+     "label": "कर",
+     "x": 790,
+     "y": 690,
+     "rot": 5,
+     "w": 380
+    },
+    {
+     "kind": "crack",
+     "label": "ज़मीन",
+     "x": 310,
+     "y": 1150,
+     "rot": 4,
+     "w": 380
+    },
+    {
+     "kind": "curse",
+     "label": "श्राप?",
+     "x": 780,
+     "y": 1190,
+     "rot": -4,
+     "w": 380
+    }
    ],
-   "stagger": 0.8,
-   "bg": "embers",
+   "links": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     3
+    ],
+    [
+     0,
+     2
+    ],
+    [
+     2,
+     3
+    ]
+   ],
+   "cross": 3,
+   "crossAt": 0.5,
+   "tag": "श्राप ✗",
    "a": 36.62,
    "b": 39.2
   },
@@ -320,10 +548,10 @@
   "headline": "एक रात नहीं…\n*75 साल!*",
   "size": 110,
   "chip": "कुलधरा का सच",
-  "chipTop": 1440,
+  "chipTop": 1480,
   "bottom": "3 सबूत: पानी · कर · ज़मीन",
   "sprite": "none",
-  "cleanShot": 18,
-  "cleanAt": 1.5
+  "cleanShot": 0,
+  "cleanAt": 1.8
  }
 }
