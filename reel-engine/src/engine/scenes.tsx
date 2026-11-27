@@ -125,7 +125,7 @@ export const SCENES: Record<string, React.FC<{ p: SceneP }>> = {
   quote: ({ p }) => { const T = useTheme(); return <><BG p={p} def="rays" /><Cam lt={p.lt} len={p.len} kind={p.cam}><Lines lt={p.lt} lines={p.s.lines} stagger={p.s.stagger ?? 0.8} delay={p.s.delay ?? 0.3} size={p.s.size} top={p.s.top ?? 600} />{p.s.by && <div style={{ position: "absolute", top: 1240, width: "100%", textAlign: "center", fontFamily: LAT, fontWeight: 600, fontSize: 36, letterSpacing: 5, color: T.gold, opacity: clamp((p.lt - 1) / 0.4) }}>— {p.s.by}</div>}</Cam><Head p={p} /></>; },
   typewriter: ({ p }) => { const T = useTheme(); const n = Math.ceil(clamp(p.lt / (p.s.dur ?? 0.7)) * p.s.text.length); return <><Sky top="#000" bot="#000" /><div style={{ position: "absolute", top: 860, width: "100%", textAlign: "center", fontFamily: fontFor(p.s.text), fontWeight: 800, fontSize: p.s.size ?? 84, color: T.gold }}>{p.s.text.slice(0, Math.max(1, n))}</div></>; },
   year: ({ p }) => { const T = useTheme(); const { s, lt } = p; const v = s.from != null ? Math.round(s.from + (s.to - s.from) * eo(clamp(lt / (s.dur ?? 1)))) : s.to; return <><BG p={p} /><Cam lt={lt} len={p.len} kind={p.cam}><Slam lt={lt} text={String(v) + (s.suffix ?? "")} size={s.size ?? 300} top={680} color={T.gold} sub={s.sub} /></Cam><Head p={p} /></>; },
-  counter: ({ p }) => { const T = useTheme(); const { s, lt } = p; const v = Math.round((s.to ?? 0) * eo(clamp(lt / (s.dur ?? 1.4)))); return <><BG p={p} /><Cam lt={lt} len={p.len} kind={p.cam}><div style={{ position: "absolute", top: 700, width: "100%", textAlign: "center", fontFamily: LAT, fontWeight: 800, fontSize: s.size ?? 240, color: T.gold, textShadow: "0 10px 40px #000" }}>{s.prefix ?? ""}{v.toLocaleString("en-IN")}{s.suffix ?? ""}</div><Slam lt={lt} delay={0.3} text={s.label ?? ""} size={70} top={1000} /></Cam><Head p={p} /></>; },
+  counter: ({ p }) => { const T = useTheme(); const { s, lt } = p; const v = Math.round((s.from ?? 0) + ((s.to ?? 0) - (s.from ?? 0)) * eo(clamp((lt - (s.delayNum ?? 0)) / (s.dur ?? 1.4)))); return <><BG p={p} /><Cam lt={lt} len={p.len} kind={p.cam}><div style={{ position: "absolute", top: 700, width: "100%", textAlign: "center", fontFamily: LAT, fontWeight: 800, fontSize: s.size ?? 240, color: T.gold, textShadow: "0 10px 40px #000" }}>{s.prefix ?? ""}{v.toLocaleString("en-IN")}{s.suffix ?? ""}</div><Slam lt={lt} delay={0.3} text={s.label ?? ""} size={70} top={1000} /></Cam><Head p={p} /></>; },
   slash: ({ p }) => { const T = useTheme(); const { s, lt } = p; const at = s.at ?? 1.2; const sl = clamp((lt - at) / 0.12), sp = eo(clamp((lt - at - 0.1) / 0.5));
     const card = <div style={{ position: "absolute", top: 640, width: "100%", textAlign: "center" }}><div style={{ fontFamily: fontFor(s.text), fontWeight: 800, fontSize: s.size ?? 150, color: T.ink, textShadow: "0 10px 40px #000" }}><Rich s={s.text} /></div>{s.sub && <div style={{ fontFamily: fontFor(s.sub), fontWeight: 800, fontSize: 60, color: T.gold, marginTop: 20 }}>{s.sub}</div>}</div>;
     return <><BG p={p} def="blood" /><Cam lt={lt} len={p.len} kind={p.cam}>
@@ -326,22 +326,26 @@ export const VILLAGE_SCENES: Record<string, React.FC<{ p: SceneP }>> = {
   /* village of sandstone houses. mode: day | night | out (lights go off one by one) | ruins */
   village: ({ p }) => {
     const T = useTheme(); const { lt, t, len, s } = p; const mode = s.mode ?? "day";
-    const night = mode !== "day" && mode !== "ruins";
+    const night = mode === "night" || mode === "out";
+    const qk = mode === "quake" ? clamp((lt - 0.4) / Math.max(0.6, len - 0.8)) : 0;
+    const shk = mode === "quake" && lt > 0.4 && lt < len - 0.2 ? Math.sin(t * 61) * 14 * (1 - qk * 0.5) : 0;
     const build = s.build ? clamp(lt / Math.max(0.8, len * 0.7)) : 1;
     return <>
       {night ? <><Sky top="#0b0a2a" bot="#1a0d20" /><Stars t={t} /></> : mode === "ruins" ? <Sky top="#f0a060" bot="#7a3a1a" /> : <Sky top="#ffb36b" bot="#d9733a" />}
       <Glow x={mode === "ruins" ? 300 : 820} y={night ? 560 : 620} r={night ? 90 : 160} c1={night ? "#f5e6c4" : "#fff0c0"} c2={night ? "#f5e6c4" : "#ffb060"} op={1} />
-      <Cam lt={lt} len={len} kind={p.cam ?? "panR"} oy={1250} amt={1.3}>
+      <Cam lt={lt} len={len} kind={p.cam ?? "panR"} oy={1250} amt={1.3}><AbsoluteFill style={{ transform: `translate(${shk}px, ${shk * 0.6}px)` }}>
         <Dunes y={1250} c1={night ? "#2a1626" : "#a8602c"} c2={night ? "#180c18" : "#7a4220"} />
         <svg width="1080" height="1920" style={{ position: "absolute", inset: 0 }}>
           {ROW.map(([x, y, w, h], i) => {
             const shown = clamp(build * ROW.length - i); if (shown <= 0) return null;
             const off = mode === "out" ? clamp((lt - 0.3 - ((i * 7) % ROW.length) * (len - 0.8) / ROW.length) / 0.15) : 0;
             const lit = night ? (1 - off) * (0.75 + 0.25 * Math.sin(t * 9 + i)) : 0;
-            return <g key={i} transform={`translate(0 ${(1 - eo(shown)) * 60})`} opacity={shown}><House x={x} y={y} w={w} h={h} ruin={mode === "ruins" ? 0.6 + (i % 3) * 0.2 : 0} lit={lit} c={night ? "#4a2a2a" : "#c98a4b"} /></g>;
+            return <g key={i} transform={`translate(0 ${(1 - eo(shown)) * 60})`} opacity={shown}><House x={x} y={y} w={w} h={h} ruin={mode === "ruins" ? 0.6 + (i % 3) * 0.2 : mode === "quake" ? clamp(qk * 1.6 - (i % 4) * 0.15) : 0} lit={lit} c={night ? "#4a2a2a" : "#c98a4b"} />
+              {mode === "quake" && <path d={`M${x + w * 0.5} ${y - h} l${-w * 0.12} ${h * 0.25} l${w * 0.2} ${h * 0.2} l${-w * 0.15} ${h * 0.3}`} fill="none" stroke="#1a0a04" strokeWidth={5} strokeDasharray={h} strokeDashoffset={h * (1 - clamp(qk * 2 - (i % 3) * 0.2))} />}</g>;
           })}
+          {mode === "quake" && Array.from({ length: 18 }, (_, k) => { const fx = (k * 137) % 1080, fy = 1000 + ((lt * 900 + k * 83) % 500); return <rect key={k} x={fx} y={fy} width={14 + (k % 3) * 8} height={10 + (k % 2) * 8} fill="#8a5428" opacity={qk > 0.05 ? 0.9 : 0} transform={`rotate(${k * 40 + lt * 200} ${fx} ${fy})`} />; })}
         </svg>
-      </Cam>
+      </AbsoluteFill></Cam>
       {mode === "ruins" && <Embers t={t} n={25} color="#ffd9a0" />}
       {s.label && <Chip lt={lt} text={s.label} top={s.labelTop ?? 1620} delay={0.3} />}
       <Head p={p} />
@@ -384,6 +388,24 @@ export const VILLAGE_SCENES: Record<string, React.FC<{ p: SceneP }>> = {
         </svg>
       </Cam>
       {s.label && <Chip lt={lt} text={s.label} top={1620} delay={0.3} />}
+      <Head p={p} /></>;
+  },
+  /* harvest shrinks while tax stays */
+  harvest: ({ p }) => {
+    const T = useTheme(); const { lt, t, len, s } = p; const q = eio(clamp((lt - 0.4) / Math.max(0.8, len - 0.9)));
+    const crop = 1 - q * (1 - (s.cropTo ?? 0.3));
+    const bar = (x: number, h: number, c: string, label: string, val: string) => <g>
+      <rect x={x} y={1240 - 620 * h} width={260} height={620 * h} rx={14} fill={c} />
+      <text x={x + 130} y={1320} textAnchor="middle" fontFamily={DEV} fontWeight={800} fontSize={64} fill={T.ink}>{label}</text>
+      <text x={x + 130} y={1240 - 620 * h - 30} textAnchor="middle" fontFamily={LAT} fontWeight={800} fontSize={60} fill={c}>{val}</text></g>;
+    return <><BG p={p} def="embers" />
+      <Cam lt={lt} len={len} kind={p.cam ?? "push"} oy={1100}>
+        <svg width="1080" height="1920" style={{ position: "absolute", inset: 0 }}>
+          {bar(160, crop, "#8fd06a", "फ़सल", "↓")}
+          {bar(660, 1, T.red, "कर", "=")}
+          {Array.from({ length: 7 }, (_, k) => { const x = 180 + k * 36, bend = q * 50 * (k % 2 ? 1 : 0.6); return <path key={k} d={`M${x} 1400 Q${x + 4} ${1400 - 120 * crop} ${x + bend} ${1400 - 220 * crop}`} stroke="#d9c25a" strokeWidth={6} fill="none" opacity={0.0} />; })}
+        </svg>
+      </Cam>
       <Head p={p} /></>;
   },
   /* curse: red word burns in over dark ruins */
