@@ -93,3 +93,8 @@
 - Guide live: https://insta-yt-automation-smoky.vercel.app/guides/claude-code-mods
 - Engine: new data-driven scene kinds (term/backup/meter/lock/warn/addon); tools/render.sh now wraps spec as {spec} (previous renders silently fell back to the default spec).
 - ReplyKaro MOD automation created 27 Nov: Next Post, MOD/mod/Mod/MODS/mods/Mods, follow gate, "Open the guide" → Mods guide. Free plan now 3 of 3 used: next reel needs a paused/deleted automation or an upgrade.
+
+## 2026-11-27 — aiwithdevansh: claude-video (Watch) reel (owner-made video)
+- Owner supplied video (32.5 s) + thumbnail. Uploaded `reels/aiwithdevansh/claude-video-watch.mp4` + `-cover.jpg` (verified).
+- Queued: posts id 7b9e4219-ea6e-4438-9861-60d1a57a183e, 29 Nov 13:30 IST, keyword SKILL. DM link: https://github.com/bradautomates/claude-video (checked: MIT, ~21.8k stars, Claude Code only).
+- ReplyKaro: owner deleted REEL automation (2 of 3 used). New SKILL "Next Post" automation must be created AFTER the 28 Nov Mods reel publishes (else it attaches to the Mods reel). Reminder set in session for 28 Nov 14:00 IST.
