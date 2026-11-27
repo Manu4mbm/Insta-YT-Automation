@@ -85,3 +85,11 @@
 - Rule: never show invented numbers in graphics (removed % labels from harvest bars).
 - git: shell glob `slug.*` misses `slug-cover.jpg`; add both files explicitly.
 - Next: 29 Nov long video #1; 1 Dec Rani Abbakka Part 1 (promised on end cards). Script needs approval first.
+
+## 2026-11-27 — aiwithdevansh: Claude Code Mods reel
+- Source: YouTube yMJrEGyl_lw (formula only; own script/visuals). Facts checked vs code.claude.com mods docs + claude.com blog.
+- Voice: Vikram, eleven_v3, 1 take (790 credits). Reel 54.4 s, uploaded `reels/aiwithdevansh/claude-code-mods.mp4` + `-cover.jpg` (verified).
+- Queued: posts id 76fb83de-bb8d-4183-8dab-d3b2b64fc247, 28 Nov 13:30 IST, keyword MOD.
+- Guide live: https://insta-yt-automation-smoky.vercel.app/guides/claude-code-mods
+- Engine: new data-driven scene kinds (term/backup/meter/lock/warn/addon); tools/render.sh now wraps spec as {spec} (previous renders silently fell back to the default spec).
+- PENDING: ReplyKaro MOD automation (Next Post) — Chrome was signed out of ReplyKaro; uses last free automation (3 of 3).
