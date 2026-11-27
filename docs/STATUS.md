@@ -77,3 +77,11 @@
 - Its own engine lives in `aiwithdevansh-engine/` (theme, scenes, voice, docs). India by Bharat's `reel-engine/` is not used for it.
 - Gemini Skills reel (v4) approved. Uploaded 26 Nov to `reels/aiwithdevansh/gemini-skills-devansh.mp4` + `-cover.jpg` (verified). Queued 26 Nov: posts id 17a0206c-8aed-4cee-945a-24b4a3e44597, 27 Nov 13:30 IST, keyword SKILL. Owner decision: DMs via ReplyKaro only, NO built-in dm_rules for aiwithdevansh (no global/SKILL rules exist, checked). Guide live: https://insta-yt-automation-smoky.vercel.app/guides/gemini-skills. ReplyKaro automation created 26 Nov: Next Post, keywords SKILL/skill/Skill/SKILLS/skills/Skills, follow gate on, final button 'Open the guide' → guide URL (2 of 3 free automations used). Test: comment SKILL from another account after 13:30 IST 27 Nov. Note: built-in gate text defaults to IG_HANDLE (@indiabybharat); set `gate_text` with @aiwithdevansh in its dm_rules row.
 - Cloud upload method (owner approved 26 Nov): pg_net call to /api/admin/upload-url using Vault `cron_secret` inside SQL, then curl PUT to the signed URL. Details: aiwithdevansh-engine/docs/PIPELINE.md step 10.
+
+## 2026-11-27 handoff
+- Kuldhara Part 2 (`rajasthan-kuldhara-part2`, 44.9 s) v2 queued for IG, YT and X on 28 Nov 08:00 UTC (13:30 IST). Media verified (byte-identical).
+- Owner feedback: v1 visuals "monotonous". v2 uses new `src/engine/dossier.tsx` scenes: `board` (corkboard, polaroids, red string; focus/cross/tag), `polaroid` (hero photo + tape + note), `casefile` (folder opens, typed lines, stamp), `newspaper` (spin-in front page). Polaroid art kinds: village, night, well, river, coin, crack, people, curse, question. Prefer these for mystery/evidence reels.
+- Also added: `harvest` scene, village `mode:"quake"`, counter `from`.
+- Rule: never show invented numbers in graphics (removed % labels from harvest bars).
+- git: shell glob `slug.*` misses `slug-cover.jpg`; add both files explicitly.
+- Next: 29 Nov long video #1; 1 Dec Rani Abbakka Part 1 (promised on end cards). Script needs approval first.
