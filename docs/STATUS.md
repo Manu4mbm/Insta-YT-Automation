@@ -92,4 +92,4 @@
 - Queued: posts id 76fb83de-bb8d-4183-8dab-d3b2b64fc247, 28 Nov 13:30 IST, keyword MOD.
 - Guide live: https://insta-yt-automation-smoky.vercel.app/guides/claude-code-mods
 - Engine: new data-driven scene kinds (term/backup/meter/lock/warn/addon); tools/render.sh now wraps spec as {spec} (previous renders silently fell back to the default spec).
-- PENDING: ReplyKaro MOD automation (Next Post) — Chrome was signed out of ReplyKaro; uses last free automation (3 of 3).
+- ReplyKaro MOD automation created 27 Nov: Next Post, MOD/mod/Mod/MODS/mods/Mods, follow gate, "Open the guide" → Mods guide. Free plan now 3 of 3 used: next reel needs a paused/deleted automation or an upgrade.
